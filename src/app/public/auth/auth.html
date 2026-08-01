@@ -1,5 +1,6 @@
 <section class="min-h-screen bg-[#f7eded] flex items-center justify-center px-4 py-8">
-  <div class="w-full max-w-6xl min-h-[720px] bg-white rounded-[28px] shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-[1.35fr_1fr]">
+  <div
+    class="w-full max-w-6xl min-h-[720px] bg-white rounded-[28px] shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-[1.35fr_1fr]">
 
     <!-- Left visual side -->
     <div class="hidden lg:flex flex-col justify-between bg-[#fde7e5] px-10 py-9">
@@ -11,10 +12,8 @@
         </p>
       </div>
 
-      <div
-        class="relative rounded-xl overflow-hidden shadow-lg h-[360px] bg-cover bg-center"
-        style="background-image: url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200&auto=format&fit=crop');"
-      >
+      <div class="relative rounded-xl overflow-hidden shadow-lg h-[360px] bg-cover bg-center"
+        style="background-image: url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200&auto=format&fit=crop');">
         <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent"></div>
 
         <div class="absolute bottom-7 left-7 right-7 text-white">
@@ -45,24 +44,15 @@
 
         <p class="mt-4 text-sm text-[#6b4b4b] leading-relaxed">
           {{
-            isLogin
-              ? 'Ingresa tus datos para acceder a tu viaje de bienestar.'
-              : 'Regístrate para comprar, guardar favoritos y seguir tus pedidos.'
+          isLogin
+          ? 'Ingresa tus datos para acceder a tu viaje de bienestar.'
+          : 'Regístrate para comprar, guardar favoritos y seguir tus pedidos.'
           }}
         </p>
 
-        <button
-          type="button"
-          (click)="continueWithGoogle()"
-          class="mt-8 w-full h-12 rounded-xl border border-[#ecd3d0] bg-white flex items-center justify-center gap-3 text-sm font-semibold text-[#2b2424] hover:bg-[#fff5f4] transition"
-        >
-          <img
-            src="/assets/logo/logo.png"
-            alt="Google"
-            class="h-5 w-5 object-contain"
-          />
-          Continuar con Google
-        </button>
+        <div class="mt-8 w-full flex justify-center">
+          <div id="google-button"></div>
+        </div>
 
         <div class="my-7 flex items-center gap-4">
           <div class="h-px bg-[#ead8d6] flex-1"></div>
@@ -71,60 +61,40 @@
         </div>
 
         @if (errorMessage()) {
-          <div class="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {{ errorMessage() }}
-          </div>
+        <div class="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          {{ errorMessage() }}
+        </div>
         }
 
         <form (ngSubmit)="submit()" class="space-y-5">
 
           @if (!isLogin) {
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="auth-label">Nombres</label>
-                <input
-                  type="text"
-                  name="nombres"
-                  [(ngModel)]="registerForm.nombres"
-                  class="auth-input"
-                  placeholder="Rafael"
-                />
-              </div>
-
-              <div>
-                <label class="auth-label">Apellidos</label>
-                <input
-                  type="text"
-                  name="apellidos"
-                  [(ngModel)]="registerForm.apellidos"
-                  class="auth-input"
-                  placeholder="Iberico"
-                />
-              </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="auth-label">Nombres</label>
+              <input type="text" name="nombres" [(ngModel)]="registerForm.nombres" class="auth-input"
+                placeholder="Rafael" />
             </div>
 
             <div>
-              <label class="auth-label">Celular</label>
-              <input
-                type="text"
-                name="celular"
-                [(ngModel)]="registerForm.celular"
-                class="auth-input"
-                placeholder="999888777"
-              />
+              <label class="auth-label">Apellidos</label>
+              <input type="text" name="apellidos" [(ngModel)]="registerForm.apellidos" class="auth-input"
+                placeholder="Iberico" />
             </div>
+          </div>
+
+          <div>
+            <label class="auth-label">Celular</label>
+            <input type="text" name="celular" [(ngModel)]="registerForm.celular" class="auth-input"
+              placeholder="999888777" />
+          </div>
           }
 
           <div>
             <label class="auth-label">Correo electrónico</label>
-            <input
-              type="email"
-              name="email"
-              [ngModel]="isLogin ? loginForm.email : registerForm.email"
-              (ngModelChange)="isLogin ? loginForm.email = $event : registerForm.email = $event"
-              class="auth-input"
-              placeholder="jane@ejemplo.com"
-            />
+            <input type="email" name="email" [ngModel]="isLogin ? loginForm.email : registerForm.email"
+              (ngModelChange)="isLogin ? loginForm.email = $event : registerForm.email = $event" class="auth-input"
+              placeholder="jane@ejemplo.com" />
           </div>
 
           <div>
@@ -132,42 +102,34 @@
               <label class="auth-label">Contraseña</label>
 
               @if (isLogin) {
-                <a href="#" class="text-xs font-semibold text-[#c43a35] hover:underline">
-                  ¿Olvidaste tu contraseña?
-                </a>
+              <a href="#" class="text-xs font-semibold text-[#c43a35] hover:underline">
+                ¿Olvidaste tu contraseña?
+              </a>
               }
             </div>
 
-            <input
-              type="password"
-              name="password"
-              [ngModel]="isLogin ? loginForm.password : registerForm.password"
+            <input type="password" name="password" [ngModel]="isLogin ? loginForm.password : registerForm.password"
               (ngModelChange)="isLogin ? loginForm.password = $event : registerForm.password = $event"
-              class="auth-input"
-              placeholder="••••••••"
-            />
+              class="auth-input" placeholder="••••••••" />
           </div>
 
-          <button
-            type="submit"
-            [disabled]="isLoading()"
-            class="w-full h-14 rounded-xl bg-[#c43a35] text-white font-bold text-lg shadow-lg shadow-red-900/20 hover:bg-[#ae302c] disabled:opacity-60 disabled:cursor-not-allowed transition"
-          >
+          <button type="submit" [disabled]="isLoading()"
+            class="w-full h-14 rounded-xl bg-[#c43a35] text-white font-bold text-lg shadow-lg shadow-red-900/20 hover:bg-[#ae302c] disabled:opacity-60 disabled:cursor-not-allowed transition">
             {{ isLoading() ? 'Procesando...' : isLogin ? 'Iniciar Sesión' : 'Crear cuenta' }}
           </button>
         </form>
 
         <p class="mt-7 text-center text-sm text-[#4c3a3a]">
           @if (isLogin) {
-            ¿Nuevo en Ayni?
-            <a routerLink="/register" class="font-bold text-[#00796b] hover:underline">
-              Crea una cuenta
-            </a>
+          ¿Nuevo en Ayni?
+          <a routerLink="/register" class="font-bold text-[#00796b] hover:underline">
+            Crea una cuenta
+          </a>
           } @else {
-            ¿Ya tienes cuenta?
-            <a routerLink="/login" class="font-bold text-[#00796b] hover:underline">
-              Inicia sesión
-            </a>
+          ¿Ya tienes cuenta?
+          <a routerLink="/login" class="font-bold text-[#00796b] hover:underline">
+            Inicia sesión
+          </a>
           }
         </p>
       </div>
