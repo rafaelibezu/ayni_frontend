@@ -1,0 +1,122 @@
+.hero-shell {
+  min-height: 520px;
+}
+
+.hero-image {
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+@media (min-width: 1024px) {
+  .hero-shell {
+    min-height: 560px;
+    aspect-ratio: 16 / 7;
+    max-height: 620px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-image {
+    object-position: 62% bottom;
+  }
+}
+
+.category-card {
+  position: relative;
+  min-height: 210px;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: #f4e8e5;
+  box-shadow: 0 18px 35px rgba(80, 45, 40, 0.08);
+  isolation: isolate;
+}
+
+.category-card:first-child {
+  min-height: 430px;
+}
+
+.product-card {
+  overflow: hidden;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 18px 35px rgba(80, 45, 40, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 45px rgba(80, 45, 40, 0.12);
+}
+
+.footer-title {
+  margin-bottom: 1rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #211313;
+}
+
+.footer-link {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: #6a4d49;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #bd3732;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: #6a4d49;
+  transition: color 0.2s ease;
+}
+
+.contact-link svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 1rem;
+  fill: none;
+  stroke: #007c7a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact-link:hover {
+  color: #bd3732;
+}
+
+.social-link {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #f8deda;
+  color: #6a4d49;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.social-link svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.social-link:hover {
+  background: #bd3732;
+  color: white;
+  transform: translateY(-2px);
+}
