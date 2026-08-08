@@ -1,0 +1,31 @@
+.auth-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6d5553;
+}
+
+.auth-input {
+  width: 100%;
+  height: 3.15rem;
+  border-radius: 0.9rem;
+  border: 1px solid #ecd3d0;
+  background: #ffffff;
+  padding: 0 1rem;
+  font-size: 0.92rem;
+  color: #2b2424;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input::placeholder {
+  color: #b5a3a0;
+}
+
+.auth-input:focus {
+  border-color: #c43a35;
+  box-shadow: 0 0 0 4px rgba(196, 58, 53, 0.12);
+}
