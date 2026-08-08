@@ -9,10 +9,11 @@ import { Product } from '../../core/models/product.model';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
 import { NewsletterService } from '../../core/services/newsletter.service';
+import { ChatbotComponent } from '../../chatbot/chatbot.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, FormsModule, RouterLink, Navbar],
+  imports: [CommonModule, FormsModule, RouterLink, Navbar, ChatbotComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
