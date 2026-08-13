@@ -3,7 +3,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-import { Navbar } from '../../shared/components/navbar/navbar';
 import { Category } from '../../core/models/category.model';
 import { Product } from '../../core/models/product.model';
 import { CategoryService } from '../../core/services/category.service';
@@ -13,7 +12,7 @@ import { ChatbotComponent } from '../../chatbot/chatbot.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, FormsModule, RouterLink, Navbar, ChatbotComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ChatbotComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
