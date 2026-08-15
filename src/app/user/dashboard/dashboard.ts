@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { UserProfile } from '../../core/models/user.model';
-import { Order } from '../../core/models/order.model';
 import { Favorite } from '../../core/models/favorite.model';
+import { Order } from '../../core/models/order.model';
 import { Product } from '../../core/models/product.model';
+import { UserProfile } from '../../core/models/user.model';
 
-import { UserService } from '../../core/services/user.service';
-import { OrderService } from '../../core/services/order.service';
 import { FavoriteService } from '../../core/services/favorite.service';
+import { OrderService } from '../../core/services/order.service';
 import { ProductService } from '../../core/services/product.service';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -28,7 +28,6 @@ export class UserDashboard {
   recentOrders = signal<Order[]>([]);
   favorites = signal<Favorite[]>([]);
   recommendedProducts = signal<Product[]>([]);
-
   isLoading = signal(true);
 
   constructor() {
@@ -39,30 +38,18 @@ export class UserDashboard {
     this.isLoading.set(true);
 
     this.userService.getMe().subscribe({
-      next: (user) => {
-        this.user.set(user);
-      },
-      error: () => {
-        this.user.set(null);
-      },
+      next: (user) => this.user.set(user),
+      error: () => this.user.set(null),
     });
 
     this.orderService.findMyOrders().subscribe({
-      next: (orders) => {
-        this.recentOrders.set(orders.slice(0, 3));
-      },
-      error: () => {
-        this.recentOrders.set([]);
-      },
+      next: (orders) => this.recentOrders.set(orders.slice(0, 3)),
+      error: () => this.recentOrders.set([]),
     });
 
     this.favoriteService.findAll().subscribe({
-      next: (favorites) => {
-        this.favorites.set(favorites.slice(0, 3));
-      },
-      error: () => {
-        this.favorites.set([]);
-      },
+      next: (favorites) => this.favorites.set(favorites.slice(0, 3)),
+      error: () => this.favorites.set([]),
     });
 
     this.productService.findFeatured().subscribe({
@@ -93,8 +80,7 @@ export class UserDashboard {
       user.documentoNumero,
     ];
 
-    const completed = fields.filter((field) => !!field).length;
-
+    const completed = fields.filter(Boolean).length;
     return Math.round((completed / fields.length) * 100);
   }
 
@@ -106,6 +92,14 @@ export class UserDashboard {
     return `S/ ${price.toFixed(2)}`;
   }
 
+  formatDate(date: string): string {
+    return new Intl.DateTimeFormat('es-PE', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(date));
+  }
+
   formatStatus(status: string | null | undefined): string {
     if (!status) {
       return 'Sin estado';
@@ -113,7 +107,7 @@ export class UserDashboard {
 
     const labels: Record<string, string> = {
       PENDIENTE_PAGO: 'Pendiente de pago',
-      PAGO_EN_REVISION: 'Pago en revisión',
+      PAGO_EN_REVISION: 'Pago en revision',
       PAGADO: 'Pagado',
       PREPARANDO: 'Preparando',
       ENVIADO: 'Enviado',
@@ -137,7 +131,6 @@ export class UserDashboard {
       case 'ENVIADO':
         return 80;
       case 'ENTREGADO':
-        return 100;
       case 'CANCELADO':
         return 100;
       default:
