@@ -98,7 +98,7 @@ export class AuthService {
       return;
     }
 
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl('/user/dashboard');
   }
 
   logout(): void {

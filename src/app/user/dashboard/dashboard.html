@@ -1,0 +1,288 @@
+
+<main class="min-h-screen bg-[#fff7f6] text-[#241818]">
+  <section class="mx-auto grid max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[280px_1fr] lg:px-10">
+
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+      <div class="rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="flex h-14 w-14 items-center justify-center rounded-full bg-[#fde8e6] text-xl font-bold text-[#bd3732]">
+            {{ user()?.nombres?.charAt(0) || 'A' }}
+          </div>
+
+          <div>
+            <h2 class="text-2xl font-extrabold leading-tight text-[#bd3732]">
+              Bienvenida,<br />
+              {{ user()?.nombres || 'Cliente' }}
+            </h2>
+            <p class="mt-1 text-xs font-semibold text-[#6a4d49]">
+              Bienestar moderno y estilo de vida
+            </p>
+          </div>
+        </div>
+
+        <nav class="mt-8 space-y-2">
+          <a routerLink="/user/dashboard" class="side-link side-link-active">
+            🏠 Panel de Control
+          </a>
+
+          <a routerLink="/user/orders" class="side-link">
+            🛍️ Pedidos Recientes
+          </a>
+
+          <a routerLink="/user/profile" class="side-link">
+            👤 Información Personal
+          </a>
+
+          <a routerLink="/user/addresses" class="side-link">
+            📍 Direcciones
+          </a>
+
+          <a routerLink="/user/favorites" class="side-link">
+            ♡ Lista de Deseos
+          </a>
+
+          <a routerLink="/user/cart" class="side-link">
+            🛒 Carrito
+          </a>
+        </nav>
+      </div>
+
+      <div class="rounded-3xl bg-[#fde8e6] p-6 shadow-sm">
+        <p class="text-sm font-semibold text-[#6a4d49]">
+          Balance de Recompensas
+        </p>
+
+        <p class="mt-2 text-xl font-extrabold text-[#bd3732]">
+          Próximamente
+        </p>
+
+        <button
+          type="button"
+          class="mt-5 w-full rounded-xl bg-[#008482] px-4 py-3 text-sm font-bold text-white"
+        >
+          Ayni Rewards
+        </button>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <section class="space-y-8">
+
+      <!-- Top grid -->
+      <div class="grid gap-6 lg:grid-cols-[1fr_280px]">
+
+        <!-- Last order -->
+        <article class="rounded-3xl bg-white p-7 shadow-sm">
+          <div class="flex items-start justify-between gap-5">
+            <div>
+              <h1 class="text-2xl font-extrabold text-[#26547c]">
+                Estado del Último Pedido
+              </h1>
+
+              @if (lastOrder) {
+                <p class="mt-2 text-sm text-[#6a4d49]">
+                  Pedido #{{ lastOrder.codigoPedido }} · {{ formatStatus(lastOrder.estado) }}
+                </p>
+              } @else {
+                <p class="mt-2 text-sm text-[#6a4d49]">
+                  Aún no tienes pedidos registrados.
+                </p>
+              }
+            </div>
+
+            @if (lastOrder) {
+              <span class="rounded-full bg-[#63d5d3] px-4 py-2 text-xs font-extrabold uppercase text-[#006b6a]">
+                {{ formatStatus(lastOrder.estado) }}
+              </span>
+            }
+          </div>
+
+          @if (lastOrder) {
+            <div class="mt-7">
+              <div class="mb-2 flex justify-between text-xs font-semibold text-[#6a4d49]">
+                <span>Procesando</span>
+                <span>Enviado</span>
+                <span>Entregado</span>
+              </div>
+
+              <div class="h-2 overflow-hidden rounded-full bg-[#fde8e6]">
+                <div
+                  class="h-full rounded-full bg-[#008482]"
+                  [style.width.%]="statusProgress(lastOrder.estado)"
+                ></div>
+              </div>
+
+              <div class="mt-5 flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-[#6a4d49]">Total</p>
+                  <p class="text-xl font-extrabold text-[#26547c]">
+                    {{ formatPrice(lastOrder.total) }}
+                  </p>
+                </div>
+
+                <a
+                  [routerLink]="['/user/orders']"
+                  class="rounded-xl bg-[#bd3732] px-5 py-3 text-sm font-bold text-white"
+                >
+                  Ver pedidos
+                </a>
+              </div>
+            </div>
+          }
+        </article>
+
+        <!-- Complete profile -->
+        <article class="rounded-3xl bg-[#ffd7d2] p-7 shadow-sm">
+          <h2 class="text-2xl font-extrabold text-[#7a1717]">
+            Completa tu Perfil
+          </h2>
+
+          <p class="mt-4 text-sm leading-6 text-[#8a302c]">
+            Completa tus datos para recibir una mejor experiencia de compra.
+          </p>
+
+          <div class="mt-8 flex items-center justify-between">
+            <div class="flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#c97873] text-lg font-extrabold text-[#7a1717]">
+              {{ profilePercent }}%
+            </div>
+
+            <a
+              routerLink="/user/profile"
+              class="rounded-xl bg-[#bd3732] px-5 py-3 text-sm font-bold text-white shadow"
+            >
+              Terminar Ahora
+            </a>
+          </div>
+        </article>
+      </div>
+
+      <!-- Recommended -->
+      <section>
+        <div class="mb-5 flex items-end justify-between">
+          <div>
+            <h2 class="text-2xl font-extrabold text-[#26547c]">
+              Recomendado para ti
+            </h2>
+            <p class="mt-1 text-sm text-[#6a4d49]">
+              Productos seleccionados para tu estilo Ayni.
+            </p>
+          </div>
+
+          <a routerLink="/catalog" class="text-sm font-bold text-[#008482]">
+            Ver todo →
+          </a>
+        </div>
+
+        @if (recommendedProducts().length > 0) {
+          <div class="grid gap-6 md:grid-cols-3">
+            @for (product of recommendedProducts(); track product.id) {
+              <article class="product-card">
+                <a [routerLink]="['/products', product.slug]">
+                  <div class="relative h-64 overflow-hidden rounded-t-2xl bg-[#f5efed]">
+                    <img
+                      [src]="product.imagenPrincipalUrl"
+                      [alt]="product.nombre"
+                      class="h-full w-full object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#bd3732] shadow"
+                    >
+                      ♡
+                    </button>
+                  </div>
+
+                  <div class="p-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-[#bd3732]">
+                      {{ product.badge || product.categoriaNombre }}
+                    </p>
+
+                    <h3 class="mt-3 text-xl font-extrabold text-[#211313]">
+                      {{ product.nombre }}
+                    </h3>
+
+                    <p class="mt-4 text-xl font-extrabold text-[#26547c]">
+                      {{ formatPrice(product.precio) }}
+                    </p>
+                  </div>
+                </a>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="rounded-3xl bg-white p-8 text-center text-[#6a4d49]">
+            No hay recomendaciones disponibles.
+          </div>
+        }
+      </section>
+
+      <!-- Favorites + recent orders -->
+      <section class="grid gap-6 lg:grid-cols-2">
+        <article class="rounded-3xl bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-extrabold text-[#26547c]">
+            Tus favoritos
+          </h2>
+
+          @if (favorites().length > 0) {
+            <div class="mt-5 space-y-4">
+              @for (favorite of favorites(); track favorite.id) {
+                <div class="flex items-center justify-between gap-4 rounded-2xl bg-[#fff7f6] p-4">
+                  <div>
+                    <p class="font-bold text-[#211313]">
+                      {{ favorite.nombreProducto }}
+                    </p>
+                    <p class="text-sm text-[#26547c]">
+                      {{ formatPrice(favorite.precio) }}
+                    </p>
+                  </div>
+
+                  <a [routerLink]="['/products', favorite.slug]" class="text-sm font-bold text-[#008482]">
+                    Ver
+                  </a>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="mt-4 text-sm text-[#6a4d49]">
+              Todavía no agregaste productos favoritos.
+            </p>
+          }
+        </article>
+
+        <article class="rounded-3xl bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-extrabold text-[#26547c]">
+            Pedidos recientes
+          </h2>
+
+          @if (recentOrders().length > 0) {
+            <div class="mt-5 space-y-4">
+              @for (order of recentOrders(); track order.id) {
+                <div class="rounded-2xl bg-[#fff7f6] p-4">
+                  <div class="flex items-center justify-between gap-4">
+                    <p class="font-bold text-[#211313]">
+                      {{ order.codigoPedido }}
+                    </p>
+
+                    <span class="rounded-full bg-[#dff7f5] px-3 py-1 text-xs font-bold text-[#008482]">
+                      {{ formatStatus(order.estado) }}
+                    </span>
+                  </div>
+
+                  <p class="mt-2 text-sm text-[#26547c]">
+                    {{ formatPrice(order.total) }}
+                  </p>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="mt-4 text-sm text-[#6a4d49]">
+              Aún no tienes pedidos recientes.
+            </p>
+          }
+        </article>
+      </section>
+    </section>
+  </section>
+</main>
