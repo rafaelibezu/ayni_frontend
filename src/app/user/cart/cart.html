@@ -6,87 +6,70 @@
 
   <div class="cart-content">
     
-    <!-- Columna Izquierda: Lista de Productos y Promociones -->
+    <!-- Columna Izquierda: Lista de Productos -->
     <div class="cart-items-section">
       
-      <!-- Producto 1 (Ejemplo) -->
-      <div class="cart-item">
-        <!-- Reemplaza el src con la ruta real de tus assets -->
-        <img src="assets/elixir.png" alt="Elixir Botánico" class="item-image">
-        
-        <div class="item-details">
-          <div class="item-title-row">
-            <h3>Elixir Botánico de Resplandor</h3>
-            <span class="item-price">$72.00</span>
-          </div>
-          <p class="item-meta">50ML • ORIGEN ORGÁNICO</p>
-          
-          <div class="item-actions">
-            <div class="quantity-control">
-              <button class="qty-btn">-</button>
-              <span class="qty-number">1</span>
-              <button class="qty-btn">+</button>
+      @if (cart()?.items?.length) {
+        @for (item of cart()?.items; track item.productId) {
+          <div class="cart-item">
+            <!-- Cargamos la imagen real o un placeholder si falla -->
+            <img [src]="item.imagenPrincipalUrl" [alt]="item.nombre" class="item-image" onerror="this.src='/assets/img/home/hero.jpg'">
+            
+            <div class="item-details">
+              <div class="item-title-row">
+                <h3>{{ item.nombre }}</h3>
+                <span class="item-price">{{ formatPrice(item.subtotal) }}</span>
+              </div>
+              <p class="item-meta">SKU/Slug: {{ item.slug }} • P.U: {{ formatPrice(item.precioUnitario) }}</p>
+              
+              <div class="item-actions">
+                <div class="quantity-control">
+                  <button class="qty-btn" (click)="updateQuantity(item, -1)">-</button>
+                  <span class="qty-number">{{ item.cantidad }}</span>
+                  <button class="qty-btn" (click)="updateQuantity(item, 1)">+</button>
+                </div>
+                <button class="delete-btn" (click)="removeItem(item)">
+                  🗑️ Eliminar
+                </button>
+              </div>
             </div>
-            <button class="delete-btn">
-              🗑️ Eliminar
-            </button>
           </div>
+        }
+      } @else {
+        <!-- Estado Vacío -->
+        <div class="rounded-2xl bg-white p-10 text-center shadow-sm">
+          <div class="text-4xl mb-4">🛍️</div>
+          <h3 class="text-xl font-bold text-[#211313]">Tu carrito está vacío</h3>
+          <p class="mt-2 text-[#6a4d49]">¡Parece que aún no has agregado nada!</p>
+          <a routerLink="/catalog" class="mt-6 inline-block rounded-xl bg-[#bd3732] px-8 py-3 font-bold text-white transition hover:bg-[#a72f2b]">
+            Ir a la tienda
+          </a>
         </div>
-      </div>
-
-      <!-- Producto 2 (Ejemplo) -->
-      <div class="cart-item">
-        <img src="assets/vela.png" alt="Vela de Cerámica" class="item-image">
-        
-        <div class="item-details">
-          <div class="item-title-row">
-            <h3>Vela de Cerámica Bosque de Medianoche</h3>
-            <span class="item-price">$48.00</span>
-          </div>
-          <p class="item-meta">VERTIDA A MANO • SÁNDALO Y CEDRO</p>
-          
-          <div class="item-actions">
-            <div class="quantity-control">
-              <button class="qty-btn">-</button>
-              <span class="qty-number">2</span>
-              <button class="qty-btn">+</button>
-            </div>
-            <button class="delete-btn">
-              🗑️ Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
+      }
 
       <!-- Banner Promocional -->
-      <div class="promo-banner">
+      <div class="promo-banner mt-6">
         <div class="promo-icon">🌿</div>
         <div class="promo-text">
           <h4>Añade un toque de seda</h4>
-          <p>Los pedidos superiores a $150 reciben una máscara de sueño de seda pura de regalo.</p>
+          <p>Los pedidos superiores a S/ 150 reciben una máscara de sueño de seda pura de regalo.</p>
         </div>
-        <a href="#" class="promo-link">Comprar<br>Accesorios</a>
+        <a routerLink="/catalog" [queryParams]="{ category: 'accesorios' }" class="promo-link">Comprar<br>Accesorios</a>
       </div>
     </div>
 
     <!-- Columna Derecha: Resumen del Pedido -->
     <div class="cart-summary-section">
-      
-      <!-- Tarjeta de Resumen -->
       <div class="summary-card">
         <h2>Resumen del pedido</h2>
         
         <div class="summary-row">
-          <span>Subtotal (3 artículos)</span>
-          <span>$168.00</span>
+          <span>Subtotal ({{ cart()?.totalItems || 0 }} artículos)</span>
+          <span>{{ formatPrice(cart()?.subtotal) }}</span>
         </div>
         <div class="summary-row">
           <span>Envío ⓘ</span>
-          <span class="text-green">GRATIS</span>
-        </div>
-        <div class="summary-row">
-          <span>Impuestos estimados</span>
-          <span>$13.44</span>
+          <span class="text-[#007c7a] font-bold">GRATIS</span>
         </div>
         
         <hr class="divider">
@@ -94,29 +77,32 @@
         <div class="summary-total">
           <span class="total-label">Total</span>
           <div class="total-price-box">
-             <span class="total-price">$181.44</span>
-             <span class="iva-note">IVA INCLUIDO CUANDO CORRESPONDA</span>
+             <span class="total-price">{{ formatPrice(cart()?.subtotal) }}</span>
+             <span class="iva-note">IGV INCLUIDO</span>
           </div>
         </div>
         
-        <button class="checkout-btn">Proceder al pago ➔</button>
+        <!-- Botón deshabilitado si no hay items -->
+        <button class="checkout-btn" [disabled]="!cart()?.items?.length" [class.opacity-50]="!cart()?.items?.length">
+          Proceder al pago ➔
+        </button>
         
-        <p class="secure-checkout-note">
-          Pago seguro cifrado proporcionado por Ayni. Aceptamos las principales tarjetas de crédito y créditos de bienestar.
+        <p class="secure-checkout-note mt-4 text-xs text-[#6a4d49]">
+          Pago seguro cifrado proporcionado por Ayni. Aceptamos Yape, Plin y las principales tarjetas.
         </p>
         
-        <div class="payment-icons">
+        <div class="payment-icons mt-3">
            💳 🏦 🌐
         </div>
       </div>
 
       <!-- Tarjeta de Ayuda -->
-      <div class="help-card">
+      <div class="help-card mt-6">
         <div class="help-icon">🎧</div>
         <div class="help-content">
           <h4>¿Necesitas ayuda?</h4>
           <p>Nuestros curadores de estilo están disponibles 24/7 para ayudarte con tu selección.</p>
-          <a href="#">Chatea con nosotros</a>
+          <a routerLink="/contact">Chatea con nosotros</a>
         </div>
       </div>
 

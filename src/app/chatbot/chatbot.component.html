@@ -1,20 +1,25 @@
 <div class="chatbot-container">
   <button class="floating-btn" type="button" (click)="toggleChat()" aria-label="Abrir chat">
-    Chat
+    <!-- Foto del botón flotante actualizada -->
+    <img src="/assets/avatar-chatbot/Avatar.png" alt="Chat" class="floating-avatar" onerror="this.src='/assets/img/home/hero.jpg'" />
   </button>
 
   <div class="chat-window" *ngIf="isOpen">
     <div class="chat-header">
       <div class="bot-info">
-        <div class="avatar">AI</div>
+        <!-- Foto de la cabecera actualizada -->
+        <img src="/assets/avatar-chatbot/Avatar.png" alt="Ayni Avatar" class="avatar-img" onerror="this.style.display='none'" />
         <span class="bot-name">Asistente Ayni</span>
       </div>
-      <button class="close-btn" type="button" (click)="toggleChat()" aria-label="Cerrar chat">x</button>
+      <button class="close-btn" type="button" (click)="toggleChat()" aria-label="Cerrar chat">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
     </div>
 
-    <div class="chat-messages">
+    <div class="chat-messages" #chatScroll>
       <div
         *ngFor="let msg of messages"
+        class="message-wrapper"
         [ngClass]="{ 'message-user': msg.sender === 'user', 'message-bot': msg.sender === 'bot' }"
       >
         <div class="bubble">
@@ -22,8 +27,11 @@
         </div>
       </div>
 
-      <div *ngIf="isLoading" class="message-bot loading">
-        <div class="bubble">Escribiendo...</div>
+      <!-- Animación de los tres puntitos -->
+      <div *ngIf="isLoading" class="message-wrapper message-bot loading">
+        <div class="bubble typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
       </div>
     </div>
 
@@ -36,7 +44,7 @@
         [disabled]="isLoading"
       />
       <button type="button" (click)="sendMessage()" [disabled]="isLoading || !userInput.trim()">
-        Enviar
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
       </button>
     </div>
   </div>

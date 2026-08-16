@@ -8,6 +8,7 @@ import { Product } from '../../core/models/product.model';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
 import { NewsletterService } from '../../core/services/newsletter.service';
+import { CartService } from '../../core/services/cart.service';
 import { ChatbotComponent } from '../../chatbot/chatbot.component';
 
 @Component({
@@ -20,6 +21,7 @@ export class Home {
   private readonly categoryService = inject(CategoryService);
   private readonly productService = inject(ProductService);
   private readonly newsletterService = inject(NewsletterService);
+  private readonly cartService = inject(CartService);
 
   categories = signal<Category[]>([]);
   featuredProducts = signal<Product[]>([]);
@@ -57,6 +59,10 @@ export class Home {
         this.isLoading.set(false);
       },
     });
+  }
+
+  addToCart(product: Product): void {
+    this.cartService.addItem({ productId: product.id!, cantidad: 1 }, product);
   }
 
   subscribeNewsletter(): void {

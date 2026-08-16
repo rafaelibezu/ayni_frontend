@@ -11,6 +11,7 @@ import { FavoriteService } from '../../core/services/favorite.service';
 import { OrderService } from '../../core/services/order.service';
 import { ProductService } from '../../core/services/product.service';
 import { UserService } from '../../core/services/user.service';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -23,6 +24,7 @@ export class UserDashboard {
   private readonly orderService = inject(OrderService);
   private readonly favoriteService = inject(FavoriteService);
   private readonly productService = inject(ProductService);
+  private readonly cartService = inject(CartService);
 
   user = signal<UserProfile | null>(null);
   recentOrders = signal<Order[]>([]);
@@ -62,6 +64,12 @@ export class UserDashboard {
         this.isLoading.set(false);
       },
     });
+  }
+
+  addToCart(product: Product, event: Event): void {
+    event.preventDefault(); // Evita que navegue a la página del producto
+    event.stopPropagation(); // Detiene la propagación del clic al enlace padre
+    this.cartService.addItem({ productId: product.id!, cantidad: 1 }, product);
   }
 
   get profilePercent(): number {

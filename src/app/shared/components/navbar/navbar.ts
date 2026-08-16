@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,8 +13,12 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class Navbar {
   readonly authService = inject(AuthService);
+  readonly cartService = inject(CartService);
 
   isUserMenuOpen = signal(false);
+
+  // Esta señal reactiva escucha el total de items en el carrito en tiempo real
+  cartItemCount = computed(() => this.cartService.cart()?.totalItems || 0);
 
   get isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
