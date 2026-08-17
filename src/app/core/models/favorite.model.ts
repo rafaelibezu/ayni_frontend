@@ -5,5 +5,6 @@ export interface Favorite {
   slug: string;
   precio: number;
   imagenPrincipalUrl: string;
+  stock: number | null;
   creadoEn: string;
 }

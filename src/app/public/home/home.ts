@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Observable } from 'rxjs';
 
 import { Category } from '../../core/models/category.model';
 import { Product } from '../../core/models/product.model';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
 import { NewsletterService } from '../../core/services/newsletter.service';
+import { AuthService } from '../../core/services/auth.service';
+import { FavoriteService } from '../../core/services/favorite.service';
 import { ChatbotComponent } from '../../chatbot/chatbot.component';
 
 @Component({
@@ -20,9 +23,15 @@ export class Home {
   private readonly categoryService = inject(CategoryService);
   private readonly productService = inject(ProductService);
   private readonly newsletterService = inject(NewsletterService);
+  private readonly favoriteService = inject(FavoriteService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   categories = signal<Category[]>([]);
   featuredProducts = signal<Product[]>([]);
+  favoriteProductIds = signal<Set<number>>(new Set());
+  pendingFavoriteIds = signal<Set<number>>(new Set());
+  favoriteError = signal<string | null>(null);
 
   newsletterEmail = '';
   newsletterMessage = signal<string | null>(null);
@@ -33,6 +42,64 @@ export class Home {
 
   constructor() {
     this.loadHomeData();
+    this.loadFavorites();
+  }
+
+  loadFavorites(): void {
+    if (!this.authService.isAuthenticated()) return;
+
+    this.favoriteService.findAll().subscribe({
+      next: (favorites) =>
+        this.favoriteProductIds.set(new Set(favorites.map((item) => item.productId))),
+      error: () => this.favoriteProductIds.set(new Set()),
+    });
+  }
+
+  toggleFavorite(product: Product): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (this.isFavoritePending(product.id)) return;
+
+    this.favoriteError.set(null);
+    this.setFavoritePending(product.id, true);
+    const request: Observable<unknown> = this.isFavorite(product.id)
+      ? this.favoriteService.remove(product.id)
+      : this.favoriteService.add(product.id);
+
+    request.subscribe({
+      next: () => {
+        this.favoriteProductIds.update((current) => {
+          const updated = new Set(current);
+          updated.has(product.id) ? updated.delete(product.id) : updated.add(product.id);
+          return updated;
+        });
+        this.setFavoritePending(product.id, false);
+      },
+      error: (error: { error?: { message?: string } }) => {
+        this.setFavoritePending(product.id, false);
+        this.favoriteError.set(
+          error?.error?.message || 'No se pudo actualizar tu lista de deseos.',
+        );
+      },
+    });
+  }
+
+  isFavorite(productId: number): boolean {
+    return this.favoriteProductIds().has(productId);
+  }
+
+  isFavoritePending(productId: number): boolean {
+    return this.pendingFavoriteIds().has(productId);
+  }
+
+  private setFavoritePending(productId: number, pending: boolean): void {
+    this.pendingFavoriteIds.update((current) => {
+      const updated = new Set(current);
+      pending ? updated.add(productId) : updated.delete(productId);
+      return updated;
+    });
   }
 
   loadHomeData(): void {
@@ -83,9 +150,7 @@ export class Home {
         },
         error: (error) => {
           this.isNewsletterLoading.set(false);
-          this.newsletterError.set(
-            error?.error?.message || 'No se pudo registrar la suscripción.'
-          );
+          this.newsletterError.set(error?.error?.message || 'No se pudo registrar la suscripción.');
         },
       });
   }

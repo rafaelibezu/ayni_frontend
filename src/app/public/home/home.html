@@ -1,22 +1,26 @@
 <app-chatbot></app-chatbot>
 
 <main class="bg-[#fff7f6] text-[#241818]">
-
   <!-- HERO -->
   <section class="mx-auto max-w-7xl px-5 lg:px-10 pt-8">
     <div class="hero-shell relative overflow-hidden rounded-[2rem] bg-[#f6dfd8] shadow-xl">
-
       <img
         src="/assets/img/home/hero.jpg"
         alt="Ayni bienestar"
         class="hero-image absolute inset-0 h-full w-full"
-        onerror="this.style.display='none'"
+        onerror="this.style.display = 'none'"
       />
 
-      <div class="absolute inset-0 bg-gradient-to-r from-[#f7dfd8]/80 via-[#f7dfd8]/45 to-[#f7dfd8]/10"></div>
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-[#f7dfd8]/80 via-[#f7dfd8]/45 to-[#f7dfd8]/10"
+      ></div>
 
-      <div class="relative z-10 flex min-h-[520px] max-w-xl flex-col justify-center px-8 py-14 lg:min-h-[560px] lg:px-16">
-        <span class="mb-6 inline-flex w-fit rounded-full bg-[#76e1df] px-5 py-2 text-xs font-bold uppercase tracking-wider text-[#006b6a]">
+      <div
+        class="relative z-10 flex min-h-[520px] max-w-xl flex-col justify-center px-8 py-14 lg:min-h-[560px] lg:px-16"
+      >
+        <span
+          class="mb-6 inline-flex w-fit rounded-full bg-[#76e1df] px-5 py-2 text-xs font-bold uppercase tracking-wider text-[#006b6a]"
+        >
           Nueva colección
         </span>
 
@@ -25,8 +29,8 @@
         </h1>
 
         <p class="mt-6 max-w-md text-base leading-7 text-[#5c3e3b]">
-          Esenciales modernistas curados para tu cuerpo, alma y hogar.
-          Descubre el enfoque de Ayni hacia una vida intencional.
+          Esenciales modernistas curados para tu cuerpo, alma y hogar. Descubre el enfoque de Ayni
+          hacia una vida intencional.
         </p>
 
         <div class="mt-9 flex flex-wrap gap-4">
@@ -54,16 +58,17 @@
   <section class="mx-auto max-w-7xl px-5 lg:px-10 py-16">
     <div class="mb-8 flex items-end justify-between gap-5">
       <div>
-        <h2 class="text-3xl font-extrabold text-[#211313]">
-          Comprar por Categoría
-        </h2>
+        <h2 class="text-3xl font-extrabold text-[#211313]">Comprar por Categoría</h2>
 
         <p class="mt-2 text-sm text-[#6a4d49]">
           Colecciones cuidadosamente curadas para tu estilo de vida modernista.
         </p>
       </div>
 
-      <a routerLink="/catalog" class="hidden text-sm font-bold text-[#26547c] hover:underline md:block">
+      <a
+        routerLink="/catalog"
+        class="hidden text-sm font-bold text-[#26547c] hover:underline md:block"
+      >
         Ver todas las categorías
       </a>
     </div>
@@ -84,7 +89,9 @@
               class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             />
 
-            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent"
+            ></div>
 
             <div class="absolute bottom-6 left-6 right-6 text-white">
               <h3 class="text-2xl font-bold">
@@ -109,12 +116,16 @@
   <section class="bg-[#fde8e6] py-16">
     <div class="mx-auto max-w-7xl px-5 lg:px-10">
       <div class="mx-auto mb-10 max-w-2xl text-center">
-        <h2 class="text-3xl font-extrabold text-[#211313]">
-          Lo mejor de Ayni
-        </h2>
+        @if (favoriteError()) {
+          <p class="mb-3 text-sm font-semibold text-[#bd3732]" role="alert">
+            {{ favoriteError() }}
+          </p>
+        }
+        <h2 class="text-3xl font-extrabold text-[#211313]">Lo mejor de Ayni</h2>
 
         <p class="mt-3 text-sm leading-6 text-[#6a4d49]">
-          Los esenciales más amados por nuestra comunidad, creados con cuidado y diseñados para perdurar.
+          Los esenciales más amados por nuestra comunidad, creados con cuidado y diseñados para
+          perdurar.
         </p>
       </div>
 
@@ -130,14 +141,26 @@
                 />
 
                 @if (product.badge) {
-                  <span class="absolute left-4 top-4 rounded-full bg-[#bd3732] px-3 py-1 text-xs font-bold text-white">
+                  <span
+                    class="absolute left-4 top-4 rounded-full bg-[#bd3732] px-3 py-1 text-xs font-bold text-white"
+                  >
                     {{ product.badge }}
                   </span>
                 }
 
                 <button
                   type="button"
-                  class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[#bd3732] shadow"
+                  class="favorite-button absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[#bd3732] shadow"
+                  [class.favorite-button-active]="isFavorite(product.id)"
+                  [class.favorite-button-pending]="isFavoritePending(product.id)"
+                  [disabled]="isFavoritePending(product.id)"
+                  [attr.aria-pressed]="isFavorite(product.id)"
+                  [attr.aria-label]="
+                    isFavorite(product.id)
+                      ? 'Quitar de lista de deseos'
+                      : 'Agregar a lista de deseos'
+                  "
+                  (click)="toggleFavorite(product)"
                 >
                   ♡
                 </button>
@@ -196,19 +219,25 @@
         </h2>
 
         <p class="mt-6 max-w-md text-sm leading-7 text-blue-100">
-          Ayni significa reciprocidad. Creemos en tomar solo lo que podemos devolver.
-          Todos nuestros productos son seleccionados con intención y cuidado.
+          Ayni significa reciprocidad. Creemos en tomar solo lo que podemos devolver. Todos nuestros
+          productos son seleccionados con intención y cuidado.
         </p>
 
         <div class="mt-9 space-y-5">
           <div class="flex items-center gap-4">
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">📦</span>
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10"
+              >📦</span
+            >
             <p class="text-xs font-bold uppercase tracking-widest">Empaque libre de plástico</p>
           </div>
 
           <div class="flex items-center gap-4">
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">🚚</span>
-            <p class="text-xs font-bold uppercase tracking-widest">Envíos con huella de carbono neutra</p>
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10"
+              >🚚</span
+            >
+            <p class="text-xs font-bold uppercase tracking-widest">
+              Envíos con huella de carbono neutra
+            </p>
           </div>
         </div>
       </div>
@@ -218,7 +247,7 @@
           src="/assets/img/home/promise.jpg"
           alt="Promesa Ayni"
           class="h-full w-full object-cover"
-          onerror="this.style.display='none'"
+          onerror="this.style.display = 'none'"
         />
       </div>
     </div>
@@ -227,13 +256,11 @@
   <!-- NEWSLETTER -->
   <section class="bg-[#f8deda] py-16">
     <div class="mx-auto max-w-3xl px-5 text-center">
-      <h2 class="text-3xl font-extrabold text-[#211313]">
-        Únete al Círculo Interno de Ayni
-      </h2>
+      <h2 class="text-3xl font-extrabold text-[#211313]">Únete al Círculo Interno de Ayni</h2>
 
       <p class="mt-3 text-sm leading-6 text-[#6a4d49]">
-        Recibe acceso anticipado a nuevas colecciones, guías de estilo de vida exclusivas
-        y consejos de bienestar modernista.
+        Recibe acceso anticipado a nuevas colecciones, guías de estilo de vida exclusivas y consejos
+        de bienestar modernista.
       </p>
 
       <form
@@ -276,5 +303,4 @@
   </section>
 
   <!-- FOOTER -->
-
 </main>

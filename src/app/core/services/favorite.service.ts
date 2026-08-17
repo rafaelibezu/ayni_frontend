@@ -17,4 +17,16 @@ export class FavoriteService {
       .get<ApiResponse<Favorite[]>>(`${environment.apiUrl}/favorites`)
       .pipe(map((response) => response.data));
   }
+
+  add(productId: number): Observable<Favorite> {
+    return this.http
+      .post<ApiResponse<Favorite>>(`${environment.apiUrl}/favorites/${productId}`, {})
+      .pipe(map((response) => response.data));
+  }
+
+  remove(productId: number): Observable<void> {
+    return this.http
+      .delete<ApiResponse<void>>(`${environment.apiUrl}/favorites/${productId}`)
+      .pipe(map(() => undefined));
+  }
 }

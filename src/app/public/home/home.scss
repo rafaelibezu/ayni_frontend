@@ -40,12 +40,38 @@
   border-radius: 1rem;
   background: white;
   box-shadow: 0 18px 35px rgba(80, 45, 40, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 24px 45px rgba(80, 45, 40, 0.12);
+}
+
+.favorite-button {
+  font-size: 0;
+}
+
+.favorite-button::before {
+  content: '♡';
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.favorite-button-active {
+  background: #bd3732 !important;
+  color: white !important;
+}
+
+.favorite-button-active::before {
+  content: '♥';
+}
+
+.favorite-button-pending {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .footer-title {
