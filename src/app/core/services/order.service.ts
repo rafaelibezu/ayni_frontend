@@ -17,4 +17,16 @@ export class OrderService {
       .get<ApiResponse<Order[]>>(`${environment.apiUrl}/orders/my`)
       .pipe(map((response) => response.data));
   }
+
+  findById(orderId: number): Observable<Order> {
+    return this.http
+      .get<ApiResponse<Order>>(`${environment.apiUrl}/orders/${orderId}`)
+      .pipe(map((response) => response.data));
+  }
+
+  cancelOrder(orderId: number): Observable<Order> {
+    return this.http
+      .patch<ApiResponse<Order>>(`${environment.apiUrl}/orders/${orderId}/cancel`, {})
+      .pipe(map((response) => response.data));
+  }
 }

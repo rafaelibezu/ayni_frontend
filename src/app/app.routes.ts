@@ -6,6 +6,7 @@ import { Dashboard } from './admin/dashboard/dashboard';
 import { UserDashboard } from './user/dashboard/dashboard';
 import { Cart } from './user/cart/cart';
 import { Profile } from './user/profile/profile';
+import { Orders as UserOrders } from './user/orders/orders';
 
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
@@ -55,6 +56,11 @@ export const routes: Routes = [
   {
     path: 'user/profile',
     component: Profile,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'user/orders',
+    component: UserOrders,
     canActivate: [authGuard],
   },
   {
