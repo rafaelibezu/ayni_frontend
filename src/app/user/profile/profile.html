@@ -1,1 +1,193 @@
-<p>profile works!</p>
+<main class="profile-page">
+  <div class="profile-shell">
+    <aside class="dashboard-sidebar">
+      <div class="welcome-block">
+        <div class="avatar">{{ user()?.nombres?.charAt(0) || 'A' }}</div>
+        <div>
+          <h1>Bienvenida,<br />{{ user()?.nombres || 'Cliente' }}</h1>
+          <p>Bienestar moderno y estilo de vida</p>
+        </div>
+      </div>
+      <nav class="side-nav" aria-label="Menú de cuenta">
+        <a routerLink="/user/dashboard" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M3 10.8 12 3l9 7.8v9.7a.5.5 0 0 1-.5.5h-5.2v-6.2H8.7V21H3.5a.5.5 0 0 1-.5-.5z" />
+          </svg><span>Panel de Control</span></a>
+        <a routerLink="/user/orders" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M7 3v3M17 3v3M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Zm0 6h16" />
+          </svg><span>Pedidos Recientes</span></a>
+        <a routerLink="/user/profile" class="side-link side-link-active"><svg viewBox="0 0 24 24">
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" />
+          </svg><span>Información Personal</span></a>
+        <span class="side-link side-link-disabled" aria-disabled="true" title="Próximamente"><svg viewBox="0 0 24 24">
+            <path d="M4 7h16v12H4zM7 11h5M7 15h10M15 7V5H9v2" />
+          </svg><span>Métodos de Pago</span></span>
+        <a routerLink="/user/favorites" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M20.5 7.8c0 5.1-8.5 10.7-8.5 10.7S3.5 12.9 3.5 7.8A4.3 4.3 0 0 1 12 6.4a4.3 4.3 0 0 1 8.5 1.4Z" />
+          </svg><span>Lista de Deseos</span></a>
+      </nav>
+      <article class="rewards-card">
+        <p>Balance de Recompensas</p>
+        <strong>2,450 pts</strong><button type="button">Unirse a Ayni Rewards</button>
+      </article>
+    </aside>
+
+    <section class="profile-content">
+      <header class="page-heading">
+        <p class="eyebrow">MI CUENTA</p>
+        <h2>Información Personal</h2>
+        <p>
+          Gestiona tus datos personales y preferencias de cuenta para una experiencia Ayni
+          personalizada.
+        </p>
+      </header>
+      @if (feedback()) {
+      <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
+        {{ feedback()?.text }}
+      </div>
+      }
+
+      <div class="settings-layout">
+        <nav class="settings-tabs" aria-label="Opciones de información personal">
+          <button type="button" [class.active]="activeTab() === 'profile'" (click)="selectTab('profile')">
+            Perfil General
+          </button>
+          <button type="button" [class.active]="activeTab() === 'addresses'" (click)="selectTab('addresses')">
+            Direcciones Guardadas
+          </button>
+          <button type="button" disabled>Métodos de Pago <small>Próximamente</small></button>
+          <button type="button" disabled>
+            Preferencias de Notificación <small>Próximamente</small>
+          </button>
+        </nav>
+
+        <div class="settings-content">
+          @if (isLoading()) {
+          <div class="loading-card">Cargando tu información...</div>
+          } @else if (activeTab() === 'profile') {
+          <form class="settings-card" #personalForm="ngForm" (ngSubmit)="saveProfile(personalForm)">
+            <h3><span aria-hidden="true">♙</span> Datos del Perfil</h3>
+            <div class="form-grid">
+              <label>Nombre
+                <input name="nombres" [(ngModel)]="profileForm.nombres" required maxlength="100" /></label>
+              <label>Apellido
+                <input name="apellidos" [(ngModel)]="profileForm.apellidos" maxlength="100" /></label>
+              <label class="full">Correo electrónico <input [value]="user()?.email || ''" disabled /></label>
+              <label class="full">Teléfono <input name="celular" [(ngModel)]="profileForm.celular"
+                  maxlength="20" /></label>
+              <label>Tipo de documento
+                <select name="documentoTipo" [(ngModel)]="profileForm.documentoTipo">
+                  <option value="">Seleccionar</option>
+                  <option value="DNI">DNI</option>
+                  <option value="CE">CE</option>
+                  <option value="PASAPORTE">Pasaporte</option>
+                </select></label>
+              <label>Número de documento
+                <input name="documentoNumero" [(ngModel)]="profileForm.documentoNumero" maxlength="20" /></label>
+            </div>
+            <button class="primary-button" type="submit" [disabled]="personalForm.invalid || isSavingProfile()">
+              {{ isSavingProfile() ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+          </form>
+          <form class="settings-card" #securityForm="ngForm" (ngSubmit)="updatePassword(securityForm)">
+            <h3><span aria-hidden="true">♙</span> Seguridad</h3>
+            <div class="form-grid">
+              <!-- <label class="full">Contraseña actual
+                <input type="password" name="passwordActual" [(ngModel)]="passwordForm.passwordActual" required
+                  autocomplete="current-password" /></label> -->
+              <label>Nueva contraseña
+                <input type="password" name="nuevaPassword" [(ngModel)]="passwordForm.nuevaPassword" required
+                  minlength="8" autocomplete="new-password" /></label>
+              <label>Confirmar contraseña
+                <input type="password" name="confirmarPassword" [(ngModel)]="passwordForm.confirmarPassword" required
+                  minlength="8" autocomplete="new-password" /></label>
+            </div>
+            <button class="outline-button" type="submit" [disabled]="securityForm.invalid || isSavingPassword()">
+              {{ isSavingPassword() ? 'Actualizando...' : 'Actualizar Contraseña' }}
+            </button>
+          </form>
+          } @else {
+          <section class="addresses-section">
+            <div class="addresses-heading">
+              <div>
+                <h3>Direcciones Guardadas</h3>
+                <p>Administra tus direcciones de entrega.</p>
+              </div>
+              <button type="button" class="primary-button" (click)="startNewAddress()">
+                Agregar dirección
+              </button>
+            </div>
+            @if (showAddressForm()) {
+            <form class="settings-card address-form" #savedAddressForm="ngForm"
+              (ngSubmit)="saveAddress(savedAddressForm)">
+              <h3>{{ editingAddressId() ? 'Editar dirección' : 'Nueva dirección' }}</h3>
+              <div class="form-grid">
+                <label>Destinatario
+                  <input name="destinatario" [(ngModel)]="addressForm.destinatario" required maxlength="120" /></label>
+                <label>Celular
+                  <input name="addressPhone" [(ngModel)]="addressForm.celular" required maxlength="20" /></label>
+                <label class="full">Dirección
+                  <input name="direccion" [(ngModel)]="addressForm.direccion" required maxlength="255" /></label>
+                <label>Distrito
+                  <input name="distrito" [(ngModel)]="addressForm.distrito" required maxlength="100" /></label>
+                <label>Referencia
+                  <input name="referencia" [(ngModel)]="addressForm.referencia" maxlength="255" /></label>
+                <label>Tipo de documento
+                  <select name="addressDocumentType" [(ngModel)]="addressForm.documentoTipo">
+                    <option value="">Seleccionar</option>
+                    <option value="DNI">DNI</option>
+                    <option value="CE">CE</option>
+                    <option value="PASAPORTE">Pasaporte</option>
+                  </select></label>
+                <label>Número de documento
+                  <input name="addressDocument" [(ngModel)]="addressForm.documentoNumero" maxlength="20" /></label>
+                <label class="checkbox full"><input type="checkbox" name="esPrincipal"
+                    [(ngModel)]="addressForm.esPrincipal" />
+                  Usar como dirección principal</label>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="text-button" (click)="cancelAddress()">
+                  Cancelar</button><button type="submit" class="primary-button"
+                  [disabled]="savedAddressForm.invalid || isSavingAddress()">
+                  {{ isSavingAddress() ? 'Guardando...' : 'Guardar dirección' }}
+                </button>
+              </div>
+            </form>
+            }
+            <div class="address-list">
+              @for (address of addresses(); track address.id) {
+              <article class="address-card">
+                <div>
+                  <div class="address-title">
+                    <strong>{{ address.destinatario }}</strong>
+                    @if (address.esPrincipal) {
+                    <span>Principal</span>
+                    }
+                  </div>
+                  <p>{{ address.direccion }}, {{ address.distrito }}</p>
+                  <p>{{ address.celular }}<br />{{ address.referencia || 'Sin referencia' }}</p>
+                </div>
+                <div class="address-actions">
+                  <button type="button" (click)="editAddress(address)">Editar</button>
+                  @if (!address.esPrincipal) {
+                  <button type="button" (click)="setMain(address.id)">Hacer principal</button>
+                  }
+                  <button type="button" class="danger" (click)="deleteAddress(address)">
+                    Eliminar
+                  </button>
+                </div>
+              </article>
+              } @empty {
+              <div class="empty-state">Aún no tienes direcciones guardadas.</div>
+              }
+            </div>
+          </section>
+          }
+        </div>
+      </div>
+      <nav class="account-dock" aria-label="Navegación rápida">
+        <a routerLink="/home"><span aria-hidden="true">⌂</span>Shop</a><a routerLink="/user/profile"
+          class="active"><span aria-hidden="true">♙</span>Account</a>
+      </nav>
+    </section>
+  </div>
+</main>
