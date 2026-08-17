@@ -57,7 +57,7 @@ export class Favorites {
           );
           this.feedback.set({
             type: 'success',
-            text: `${favorite.nombreProducto} fue eliminado de tu lista.`,
+            text: `${favorite.nombre} fue eliminado de tu lista.`,
           });
         },
         error: (error) => this.showError(error, 'No se pudo eliminar el producto.'),
@@ -75,7 +75,7 @@ export class Favorites {
         next: () =>
           this.feedback.set({
             type: 'success',
-            text: `${favorite.nombreProducto} se agregó al carrito.`,
+            text: `${favorite.nombre} se agregó al carrito.`,
           }),
         error: (error) => this.showError(error, 'No se pudo agregar el producto al carrito.'),
       });
@@ -89,6 +89,13 @@ export class Favorites {
   }
   formatPrice(value: number): string {
     return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(value);
+  }
+  formatDate(value: string): string {
+    return new Intl.DateTimeFormat('es-PE', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(value));
   }
 
   private loadUser(): void {

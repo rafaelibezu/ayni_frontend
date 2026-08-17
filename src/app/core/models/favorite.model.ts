@@ -1,10 +1,14 @@
 export interface Favorite {
   id: number;
   productId: number;
-  nombreProducto: string;
+  nombre: string;
   slug: string;
   precio: number;
-  imagenPrincipalUrl: string;
+  precioComparacion: number | null;
   stock: number | null;
+  imagenPrincipalUrl: string | null;
+  badge: string | null;
+  categoriaNombre: string;
+  categoriaSlug: string;
   creadoEn: string;
 }
