@@ -9,35 +9,21 @@
         </div>
       </div>
       <nav class="side-nav" aria-label="Menú de cuenta">
-        <a routerLink="/user/dashboard" class="side-link"
-          ><svg viewBox="0 0 24 24">
-            <path
-              d="M3 10.8 12 3l9 7.8v9.7a.5.5 0 0 1-.5.5h-5.2v-6.2H8.7V21H3.5a.5.5 0 0 1-.5-.5z"
-            /></svg
-          ><span>Panel de Control</span></a
-        >
-        <a routerLink="/user/orders" class="side-link"
-          ><svg viewBox="0 0 24 24">
-            <path d="M7 3v3M17 3v3M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Zm0 6h16" /></svg
-          ><span>Pedidos Recientes</span></a
-        >
-        <a routerLink="/user/profile" class="side-link"
-          ><svg viewBox="0 0 24 24">
-            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" /></svg
-          ><span>Información Personal</span></a
-        >
-        <span class="side-link side-link-disabled" aria-disabled="true" title="Próximamente"
-          ><svg viewBox="0 0 24 24">
-            <path d="M4 7h16v12H4zM7 11h5M7 15h10M15 7V5H9v2" /></svg
-          ><span>Métodos de Pago</span></span
-        >
-        <a routerLink="/user/favorites" class="side-link side-link-active"
-          ><svg viewBox="0 0 24 24">
-            <path
-              d="M20.5 7.8c0 5.1-8.5 10.7-8.5 10.7S3.5 12.9 3.5 7.8A4.3 4.3 0 0 1 12 6.4a4.3 4.3 0 0 1 8.5 1.4Z"
-            /></svg
-          ><span>Lista de Deseos</span></a
-        >
+        <a routerLink="/user/dashboard" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M3 10.8 12 3l9 7.8v9.7a.5.5 0 0 1-.5.5h-5.2v-6.2H8.7V21H3.5a.5.5 0 0 1-.5-.5z" />
+          </svg><span>Panel de Control</span></a>
+        <a routerLink="/user/orders" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M7 3v3M17 3v3M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Zm0 6h16" />
+          </svg><span>Pedidos Recientes</span></a>
+        <a routerLink="/user/profile" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" />
+          </svg><span>Información Personal</span></a>
+        <!-- <span class="side-link side-link-disabled" aria-disabled="true" title="Próximamente"><svg viewBox="0 0 24 24">
+            <path d="M4 7h16v12H4zM7 11h5M7 15h10M15 7V5H9v2" />
+          </svg><span>Métodos de Pago</span></span> -->
+        <a routerLink="/user/favorites" class="side-link side-link-active"><svg viewBox="0 0 24 24">
+            <path d="M20.5 7.8c0 5.1-8.5 10.7-8.5 10.7S3.5 12.9 3.5 7.8A4.3 4.3 0 0 1 12 6.4a4.3 4.3 0 0 1 8.5 1.4Z" />
+          </svg><span>Lista de Deseos</span></a>
       </nav>
       <article class="rewards-card">
         <p>Balance de Recompensas</p>
@@ -52,102 +38,89 @@
           <h2>Mi Lista de Deseos</h2>
           <p>Productos que te encantan, listos para cuando quieras.</p>
         </div>
-        <span class="saved-count"
-          >{{ favorites().length }}
-          {{ favorites().length === 1 ? 'producto guardado' : 'productos guardados' }}</span
-        >
+        <span class="saved-count">{{ favorites().length }}
+          {{ favorites().length === 1 ? 'producto guardado' : 'productos guardados' }}</span>
       </header>
       @if (feedback()) {
-        <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
-          {{ feedback()?.text }}
-        </div>
+      <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
+        {{ feedback()?.text }}
+      </div>
       }
 
       @if (isLoading()) {
-        <div class="empty-state">Cargando tu lista de deseos...</div>
+      <div class="empty-state">Cargando tu lista de deseos...</div>
       } @else if (favorites().length) {
-        <div class="favorites-grid">
-          @for (favorite of favorites(); track favorite.id) {
-            <article class="favorite-card">
-              <div class="product-media">
-                @if (favorite.imagenPrincipalUrl) {
-                  <img [src]="favorite.imagenPrincipalUrl" [alt]="favorite.nombre" />
-                } @else {
-                  <div class="product-placeholder" aria-hidden="true">
-                    <span>{{ favorite.nombre.charAt(0) }}</span>
-                    <small>{{ favorite.categoriaNombre }}</small>
-                  </div>
-                }
-                @if (favorite.badge) {
-                  <span class="product-badge">{{ favorite.badge }}</span>
-                }
-                @if (isLowStock(favorite)) {
-                  <span class="stock-badge">Poco stock</span>
-                }
-                @if (!hasStock(favorite)) {
-                  <span class="stock-badge out">Agotado</span>
-                }
-                <button
-                  type="button"
-                  class="remove-button"
-                  (click)="remove(favorite)"
-                  [disabled]="removingProductId() === favorite.productId"
-                  [attr.aria-label]="'Eliminar ' + favorite.nombre"
-                >
-                  {{ removingProductId() === favorite.productId ? '…' : '×' }}
-                </button>
-              </div>
-              <div class="product-info">
-                <div class="product-category">{{ favorite.categoriaNombre }}</div>
-                <h3>{{ favorite.nombre }}</h3>
-                <div class="price-row">
-                  <strong>{{ formatPrice(favorite.precio) }}</strong>
-                  @if (favorite.precioComparacion) {
-                    <span>{{ formatPrice(favorite.precioComparacion) }}</span>
-                  }
-                </div>
-                <div class="product-meta">
-                  <span>{{
-                    favorite.stock === null
-                      ? 'Stock por confirmar'
-                      : favorite.stock + ' disponibles'
-                  }}</span
-                  ><span>Guardado el {{ formatDate(favorite.creadoEn) }}</span>
-                </div>
-                <button
-                  type="button"
-                  class="cart-button"
-                  (click)="addToCart(favorite)"
-                  [disabled]="!hasStock(favorite) || addingProductId() === favorite.productId"
-                >
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M3 3h2l2.4 11h10.8l2-7H7M10 20a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm9 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
-                    /></svg
-                  >{{
-                    addingProductId() === favorite.productId
-                      ? 'Agregando...'
-                      : hasStock(favorite)
-                        ? 'Agregar al carrito'
-                        : 'Sin stock'
-                  }}
-                </button>
-              </div>
-            </article>
-          }
-        </div>
+      <div class="favorites-grid">
+        @for (favorite of favorites(); track favorite.id) {
+        <article class="favorite-card">
+          <div class="product-media">
+            @if (favorite.imagenPrincipalUrl) {
+            <img [src]="favorite.imagenPrincipalUrl" [alt]="favorite.nombre" />
+            } @else {
+            <div class="product-placeholder" aria-hidden="true">
+              <span>{{ favorite.nombre.charAt(0) }}</span>
+              <small>{{ favorite.categoriaNombre }}</small>
+            </div>
+            }
+            @if (favorite.badge) {
+            <span class="product-badge">{{ favorite.badge }}</span>
+            }
+            @if (isLowStock(favorite)) {
+            <span class="stock-badge">Poco stock</span>
+            }
+            @if (!hasStock(favorite)) {
+            <span class="stock-badge out">Agotado</span>
+            }
+            <button type="button" class="remove-button" (click)="remove(favorite)"
+              [disabled]="removingProductId() === favorite.productId" [attr.aria-label]="'Eliminar ' + favorite.nombre">
+              {{ removingProductId() === favorite.productId ? '…' : '×' }}
+            </button>
+          </div>
+          <div class="product-info">
+            <div class="product-category">{{ favorite.categoriaNombre }}</div>
+            <h3>{{ favorite.nombre }}</h3>
+            <div class="price-row">
+              <strong>{{ formatPrice(favorite.precio) }}</strong>
+              @if (favorite.precioComparacion) {
+              <span>{{ formatPrice(favorite.precioComparacion) }}</span>
+              }
+            </div>
+            <div class="product-meta">
+              <span>{{
+                favorite.stock === null
+                ? 'Stock por confirmar'
+                : favorite.stock + ' disponibles'
+                }}</span><span>Guardado el {{ formatDate(favorite.creadoEn) }}</span>
+            </div>
+            <button type="button" class="cart-button" (click)="addToCart(favorite)"
+              [disabled]="!hasStock(favorite) || addingProductId() === favorite.productId">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M3 3h2l2.4 11h10.8l2-7H7M10 20a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm9 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+              </svg>{{
+              addingProductId() === favorite.productId
+              ? 'Agregando...'
+              : hasStock(favorite)
+              ? 'Agregar al carrito'
+              : 'Sin stock'
+              }}
+            </button>
+          </div>
+        </article>
+        }
+      </div>
       } @else {
-        <div class="empty-state">
-          <div class="empty-heart">♡</div>
-          <h3>Tu lista de deseos está vacía</h3>
-          <p>Explora nuestros productos y guarda tus favoritos.</p>
-          <a routerLink="/home">Descubrir productos</a>
-        </div>
+      <div class="empty-state">
+        <div class="empty-heart">♡</div>
+        <h3>Tu lista de deseos está vacía</h3>
+        <p>Explora nuestros productos y guarda tus favoritos.</p>
+        <a routerLink="/home">Descubrir productos</a>
+      </div>
       }
 
       <nav class="account-dock" aria-label="Navegación rápida">
-        <a routerLink="/home"><span aria-hidden="true">⌂</span>Shop</a
-        ><a routerLink="/user/profile"><span aria-hidden="true">♙</span>Account</a>
+        <a routerLink="/home"><span aria-hidden="true">⌂</span>Shop</a><a routerLink="/user/profile"><span
+            aria-hidden="true">♙</span>Account</a>
       </nav>
     </section>
   </div>

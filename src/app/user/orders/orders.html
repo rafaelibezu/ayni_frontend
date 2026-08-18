@@ -9,34 +9,21 @@
         </div>
       </div>
       <nav class="side-nav" aria-label="Menú de cuenta">
-        <a routerLink="/user/dashboard" class="side-link"
-          ><svg viewBox="0 0 24 24">
-            <path
-              d="M3 10.8 12 3l9 7.8v9.7a.5.5 0 0 1-.5.5h-5.2v-6.2H8.7V21H3.5a.5.5 0 0 1-.5-.5z"
-            /></svg
-          ><span>Panel de Control</span></a
-        >
-        <a routerLink="/user/orders" class="side-link side-link-active"
-          ><svg viewBox="0 0 24 24">
-            <path d="M7 3v3M17 3v3M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Zm0 6h16" /></svg
-          ><span>Pedidos Recientes</span></a
-        >
-        <a routerLink="/user/profile" class="side-link"
-          ><svg viewBox="0 0 24 24">
-            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" /></svg
-          ><span>Información Personal</span></a
-        >
-        <span class="side-link side-link-disabled" aria-disabled="true" title="Próximamente"
-          ><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4zM7 11h5M7 15h10M15 7V5H9v2" /></svg
-          ><span>Métodos de Pago</span></span
-        >
-        <a routerLink="/user/favorites" class="side-link"
-          ><svg viewBox="0 0 24 24">
-            <path
-              d="M20.5 7.8c0 5.1-8.5 10.7-8.5 10.7S3.5 12.9 3.5 7.8A4.3 4.3 0 0 1 12 6.4a4.3 4.3 0 0 1 8.5 1.4Z"
-            /></svg
-          ><span>Lista de Deseos</span></a
-        >
+        <a routerLink="/user/dashboard" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M3 10.8 12 3l9 7.8v9.7a.5.5 0 0 1-.5.5h-5.2v-6.2H8.7V21H3.5a.5.5 0 0 1-.5-.5z" />
+          </svg><span>Panel de Control</span></a>
+        <a routerLink="/user/orders" class="side-link side-link-active"><svg viewBox="0 0 24 24">
+            <path d="M7 3v3M17 3v3M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Zm0 6h16" />
+          </svg><span>Pedidos Recientes</span></a>
+        <a routerLink="/user/profile" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0" />
+          </svg><span>Información Personal</span></a>
+        <!-- <span class="side-link side-link-disabled" aria-disabled="true" title="Próximamente"><svg viewBox="0 0 24 24">
+            <path d="M4 7h16v12H4zM7 11h5M7 15h10M15 7V5H9v2" />
+          </svg><span>Métodos de Pago</span></span> -->
+        <a routerLink="/user/favorites" class="side-link"><svg viewBox="0 0 24 24">
+            <path d="M20.5 7.8c0 5.1-8.5 10.7-8.5 10.7S3.5 12.9 3.5 7.8A4.3 4.3 0 0 1 12 6.4a4.3 4.3 0 0 1 8.5 1.4Z" />
+          </svg><span>Lista de Deseos</span></a>
       </nav>
       <article class="rewards-card">
         <p>Balance de Recompensas</p>
@@ -51,130 +38,112 @@
         <p>Revisa el historial y estado de tus compras en Ayni.</p>
       </header>
       @if (feedback()) {
-        <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
-          {{ feedback()?.text }}
-        </div>
+      <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
+        {{ feedback()?.text }}
+      </div>
       }
 
       @if (isLoading()) {
-        <div class="empty-state">Cargando tus pedidos...</div>
+      <div class="empty-state">Cargando tus pedidos...</div>
       } @else {
-        <div class="orders-list">
-          @for (order of orders(); track order.id) {
-            <article class="order-card" [class.order-cancelled]="order.estado === 'CANCELADO'">
-              <header class="order-summary">
-                <div>
-                  <div class="order-code">
-                    PEDIDO #{{ order.codigoPedido }}
-                    <span class="status" [class]="statusClass(order.estado)">{{
-                      statusLabel(order.estado)
-                    }}</span>
-                  </div>
-                  <p>Realizado el {{ formatDate(order.creadoEn) }}</p>
-                </div>
-                <div class="order-total">
-                  <strong>{{ formatPrice(order.total) }}</strong
-                  ><span
-                    >{{ order.items.length }}
-                    {{ order.items.length === 1 ? 'artículo' : 'artículos' }}</span
-                  >
-                </div>
-              </header>
-              <div class="order-actions-row">
-                <div class="item-previews" aria-label="Productos del pedido">
-                  @for (item of order.items.slice(0, 3); track item.id) {
-                    <span class="item-preview" [title]="item.nombreProducto">{{
-                      item.nombreProducto.charAt(0)
-                    }}</span>
-                  }
-                  @if (order.items.length > 3) {
-                    <span class="more-items">+{{ order.items.length - 3 }}</span>
-                  }
-                </div>
-                <div class="main-actions">
-                  <button
-                    type="button"
-                    class="details-button"
-                    (click)="toggleDetails(order)"
-                    [disabled]="loadingDetailId() === order.id"
-                  >
-                    {{
-                      loadingDetailId() === order.id
-                        ? 'Cargando...'
-                        : expandedOrderId() === order.id
-                          ? 'Ocultar detalles'
-                          : 'Ver detalles'
-                    }}
-                  </button>
-                  <button
-                    type="button"
-                    class="reorder-button"
-                    disabled
-                    title="Próximamente: falta endpoint"
-                  >
-                    Reordenar
-                  </button>
-                </div>
+      <div class="orders-list">
+        @for (order of orders(); track order.id) {
+        <article class="order-card" [class.order-cancelled]="order.estado === 'CANCELADO'">
+          <header class="order-summary">
+            <div>
+              <div class="order-code">
+                PEDIDO #{{ order.codigoPedido }}
+                <span class="status" [class]="statusClass(order.estado)">{{
+                  statusLabel(order.estado)
+                  }}</span>
               </div>
-
-              @if (expandedOrderId() === order.id && orderDetail()) {
-                <section class="order-detail">
-                  <h3>Detalle del pedido</h3>
-                  <div class="detail-items">
-                    @for (item of orderDetail()!.items; track item.id) {
-                      <div class="detail-item">
-                        <div>
-                          <strong>{{ item.nombreProducto }}</strong
-                          ><span>SKU: {{ item.sku }} · Cantidad: {{ item.cantidad }}</span>
-                        </div>
-                        <span>{{ formatPrice(item.subtotal) }}</span>
-                      </div>
-                    }
-                  </div>
-                  <div class="totals">
-                    <p>
-                      <span>Subtotal</span
-                      ><strong>{{ formatPrice(orderDetail()!.subtotal) }}</strong>
-                    </p>
-                    <p>
-                      <span>Envío</span
-                      ><strong>{{ formatPrice(orderDetail()!.costoEnvio) }}</strong>
-                    </p>
-                    <p class="grand-total">
-                      <span>Total</span><strong>{{ formatPrice(orderDetail()!.total) }}</strong>
-                    </p>
-                    @if (orderDetail()!.metodoPago) {
-                      <p>
-                        <span>Método de pago</span><strong>{{ orderDetail()!.metodoPago }}</strong>
-                      </p>
-                    }
-                  </div>
-                  @if (canCancel(orderDetail()!.estado)) {
-                    <button
-                      type="button"
-                      class="cancel-button"
-                      (click)="cancelOrder(orderDetail()!)"
-                      [disabled]="cancellingOrderId() === order.id"
-                    >
-                      {{ cancellingOrderId() === order.id ? 'Cancelando...' : 'Cancelar pedido' }}
-                    </button>
-                  }
-                </section>
-              }
-            </article>
-          } @empty {
-            <div class="empty-state">
-              <h3>Aún no tienes pedidos</h3>
-              <p>Cuando realices una compra, podrás revisar aquí su estado.</p>
-              <a routerLink="/home">Ir a comprar</a>
+              <p>Realizado el {{ formatDate(order.creadoEn) }}</p>
             </div>
+            <div class="order-total">
+              <strong>{{ formatPrice(order.total) }}</strong><span>{{ order.items.length }}
+                {{ order.items.length === 1 ? 'artículo' : 'artículos' }}</span>
+            </div>
+          </header>
+          <div class="order-actions-row">
+            <div class="item-previews" aria-label="Productos del pedido">
+              @for (item of order.items.slice(0, 3); track item.id) {
+              <span class="item-preview" [title]="item.nombreProducto">{{
+                item.nombreProducto.charAt(0)
+                }}</span>
+              }
+              @if (order.items.length > 3) {
+              <span class="more-items">+{{ order.items.length - 3 }}</span>
+              }
+            </div>
+            <div class="main-actions">
+              <button type="button" class="details-button" (click)="toggleDetails(order)"
+                [disabled]="loadingDetailId() === order.id">
+                {{
+                loadingDetailId() === order.id
+                ? 'Cargando...'
+                : expandedOrderId() === order.id
+                ? 'Ocultar detalles'
+                : 'Ver detalles'
+                }}
+              </button>
+              <button type="button" class="reorder-button" disabled title="Próximamente: falta endpoint">
+                Reordenar
+              </button>
+            </div>
+          </div>
+
+          @if (expandedOrderId() === order.id && orderDetail()) {
+          <section class="order-detail">
+            <h3>Detalle del pedido</h3>
+            <div class="detail-items">
+              @for (item of orderDetail()!.items; track item.id) {
+              <div class="detail-item">
+                <div>
+                  <strong>{{ item.nombreProducto }}</strong><span>SKU: {{ item.sku }} · Cantidad: {{ item.cantidad
+                    }}</span>
+                </div>
+                <span>{{ formatPrice(item.subtotal) }}</span>
+              </div>
+              }
+            </div>
+            <div class="totals">
+              <p>
+                <span>Subtotal</span><strong>{{ formatPrice(orderDetail()!.subtotal) }}</strong>
+              </p>
+              <p>
+                <span>Envío</span><strong>{{ formatPrice(orderDetail()!.costoEnvio) }}</strong>
+              </p>
+              <p class="grand-total">
+                <span>Total</span><strong>{{ formatPrice(orderDetail()!.total) }}</strong>
+              </p>
+              @if (orderDetail()!.metodoPago) {
+              <p>
+                <span>Método de pago</span><strong>{{ orderDetail()!.metodoPago }}</strong>
+              </p>
+              }
+            </div>
+            @if (canCancel(orderDetail()!.estado)) {
+            <button type="button" class="cancel-button" (click)="cancelOrder(orderDetail()!)"
+              [disabled]="cancellingOrderId() === order.id">
+              {{ cancellingOrderId() === order.id ? 'Cancelando...' : 'Cancelar pedido' }}
+            </button>
+            }
+          </section>
           }
+        </article>
+        } @empty {
+        <div class="empty-state">
+          <h3>Aún no tienes pedidos</h3>
+          <p>Cuando realices una compra, podrás revisar aquí su estado.</p>
+          <a routerLink="/home">Ir a comprar</a>
         </div>
+        }
+      </div>
       }
 
       <nav class="account-dock" aria-label="Navegación rápida">
-        <a routerLink="/home"><span aria-hidden="true">⌂</span>Shop</a
-        ><a routerLink="/user/profile"><span aria-hidden="true">♙</span>Account</a>
+        <a routerLink="/home"><span aria-hidden="true">⌂</span>Shop</a><a routerLink="/user/profile"><span
+            aria-hidden="true">♙</span>Account</a>
       </nav>
     </section>
   </div>
