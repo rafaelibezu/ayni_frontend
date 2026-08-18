@@ -1,0 +1,105 @@
+<main class="yape-page">
+  <header class="yape-header">
+    <div>
+      <h1>Pago con Yape</h1>
+      <p>Escanea el QR o registra tu operacion para enviar tu comprobante.</p>
+    </div>
+    <span>Pendiente de pago</span>
+  </header>
+
+  <nav class="steps" aria-label="Proceso de compra">
+    <span>Carrito</span>
+    <i></i>
+    <span>Checkout</span>
+    <i></i>
+    <span class="active">Yape</span>
+  </nav>
+
+  @if (isLoading()) {
+    <section class="state-card">Cargando pedido...</section>
+  } @else if (feedback() && !order()) {
+    <section class="state-card error">{{ feedback() }}</section>
+  } @else if (order()) {
+    <section class="yape-grid">
+      <div class="order-panel">
+        <h2>Informacion del pedido</h2>
+        <article class="order-box">
+          <h3>Pedido #{{ order()!.codigoPedido }}</h3>
+          <div class="order-items">
+            @for (item of order()!.items; track item.id) {
+              <div>
+                @if (item.imagenPrincipalUrl) {
+                  <img [src]="item.imagenPrincipalUrl" [alt]="item.nombreProducto" />
+                } @else {
+                  <span>{{ item.nombreProducto.charAt(0) }}</span>
+                }
+                <p>
+                  <strong>{{ item.nombreProducto }}</strong>
+                  <small>{{ formatPrice(item.precioUnitario) }} x {{ item.cantidad }}</small>
+                </p>
+              </div>
+            }
+          </div>
+          <footer>
+            <span>Total del pedido</span>
+            <strong>{{ formatPrice(order()!.total) }}</strong>
+          </footer>
+        </article>
+
+        <article class="qr-card">
+          <h3>Paga con Yape</h3>
+          <div class="qr-layout">
+            <img class="yape-logo" src="/assets/logo/paga-yape.png" alt="Paga con Yape" />
+            <img class="qr-box" src="/assets/logo/qr-yape.png" alt="QR de pago Yape" />
+          </div>
+          <dl>
+            <div>
+              <dt>Numero Yape</dt>
+              <dd>{{ yapeNumber }}</dd>
+            </div>
+            <div>
+              <dt>Titular</dt>
+              <dd>{{ yapeHolder }}</dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="payment-panel">
+        <h2>Registrar comprobante</h2>
+        @if (feedback()) {
+          <p class="feedback" role="alert">{{ feedback() }}</p>
+        }
+
+        <form (ngSubmit)="submitPayment()">
+          <label>
+            Numero de operacion
+            <input name="numeroOperacion" [(ngModel)]="numeroOperacion" placeholder="Ej: 0123456789" />
+          </label>
+          <label>
+            URL del comprobante o imagen subida
+            <input
+              name="comprobanteUrl"
+              [(ngModel)]="comprobanteUrl"
+              placeholder="Ej: https://yape.com/pe/recibo/0123456789"
+            />
+          </label>
+          <div class="upload-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4m0 0 4 4m-4-4-4 4M4 16v3h16v-3" />
+            </svg>
+            <p>Arrastra tu imagen aqui o pega la URL del comprobante.</p>
+            <small>Formatos: JPG, PNG o PDF. Max. 5MB.</small>
+          </div>
+          <button type="submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Enviando...' : 'Enviar comprobante' }}
+          </button>
+        </form>
+
+        <aside class="info-card">
+          Una vez enviado, tu pedido pasara a revision.
+        </aside>
+      </div>
+    </section>
+  }
+</main>

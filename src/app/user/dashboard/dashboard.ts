@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Favorite } from '../../core/models/favorite.model';
 import { Order } from '../../core/models/order.model';
@@ -23,12 +23,14 @@ export class UserDashboard {
   private readonly orderService = inject(OrderService);
   private readonly favoriteService = inject(FavoriteService);
   private readonly productService = inject(ProductService);
+  private readonly route = inject(ActivatedRoute);
 
   user = signal<UserProfile | null>(null);
   recentOrders = signal<Order[]>([]);
   favorites = signal<Favorite[]>([]);
   recommendedProducts = signal<Product[]>([]);
   isLoading = signal(true);
+  paymentSent = signal(this.route.snapshot.queryParamMap.get('payment') === 'sent');
 
   constructor() {
     this.loadDashboard();

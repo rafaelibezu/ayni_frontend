@@ -34,7 +34,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 7h16v12H4zM7 11h5M7 15h10M15 7V5H9v2" />
           </svg>
-          <span>Metodos de Pago</span>
+          <span>Pago Yape</span>
         </span>
         <a routerLink="/user/favorites" class="side-link">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -54,6 +54,16 @@
     </aside>
 
     <section class="dashboard-content">
+      @if (paymentSent()) {
+        <article class="payment-success-card">
+          <div>
+            <strong>Completo el pago</strong>
+            <p>Tu comprobante fue enviado correctamente. Nuestro equipo lo validara pronto.</p>
+          </div>
+          <a routerLink="/user/orders">Ver mis pedidos</a>
+        </article>
+      }
+
       <div class="summary-grid">
         <article class="order-card">
           <div class="order-card__top">

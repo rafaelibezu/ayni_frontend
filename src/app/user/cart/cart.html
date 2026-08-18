@@ -2,7 +2,7 @@
   <header class="cart-header">
     <h1>Tu bolsa de compras</h1>
     <p>
-      Revisa tus artículos seleccionados y procede al pago para un toque de bienestar modernista.
+      Revisa tus productos seleccionados y continua al checkout para confirmar tu direccion.
     </p>
   </header>
 
@@ -18,7 +18,7 @@
     <section class="cart-state empty-cart">
       <div aria-hidden="true">🛒</div>
       <h2>Tu carrito está vacío</h2>
-      <p>Descubre productos creados para acompañar tus rituales cotidianos.</p>
+      <p>Explora la tienda y agrega tus productos favoritos.</p>
       <a routerLink="/home">Seguir comprando</a>
     </section>
   } @else {
@@ -120,16 +120,11 @@
               ><span class="iva-note">Antes de envío</span>
             </div>
           </div>
-          <button
-            type="button"
-            class="checkout-btn"
-            disabled
-            title="Próximamente: checkout pendiente de integración"
-          >
+          <a routerLink="/user/checkout" class="checkout-btn">
             Proceder al pago →
-          </button>
+          </a>
           <p class="secure-checkout-note">
-            El pago se habilitará cuando esté disponible la integración de checkout.
+            Continua al checkout para seleccionar direccion y confirmar tu pedido.
           </p>
         </div>
       </aside>

@@ -5,6 +5,7 @@ export interface OrderItem {
   cantidad: number;
   precioUnitario: number;
   subtotal: number;
+  imagenPrincipalUrl?: string | null;
 }
 
 export interface Order {

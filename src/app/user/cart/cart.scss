@@ -291,6 +291,45 @@
   color: #fff;
   font-size: 1rem;
   font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cart-container {
+  color: #4a3734;
+}
+
+.cart-header h1 {
+  color: #2c526b;
+  font-weight: 500;
+}
+
+.cart-header p,
+.summary-row,
+.secure-checkout-note {
+  color: #7a615d;
+}
+
+.summary-card {
+  background: #fff8f6;
+  box-shadow: 0 14px 28px rgb(80 45 40 / 4%);
+}
+
+.summary-card h2,
+.total-label {
+  color: #43312e;
+  font-weight: 650;
+}
+
+.total-price {
+  color: #2c526b;
+  font-weight: 650;
+}
+
+.checkout-btn {
+  background: #c94943;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgb(189 55 50 / 12%);
 }
 .checkout-btn:disabled {
   cursor: not-allowed;
@@ -341,4 +380,8 @@
   .summary-card {
     padding: 1.4rem;
   }
+}
+
+.secure-checkout-note {
+  color: #7a615d;
 }

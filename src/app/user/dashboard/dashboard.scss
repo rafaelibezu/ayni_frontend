@@ -20,6 +20,36 @@
 .dashboard-sidebar {
   padding-top: 1rem;
 }
+.payment-success-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid #9fded7;
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+  background: #e9f9f6;
+  color: #08756f;
+  box-shadow: 0 18px 35px rgb(80 45 40 / 7%);
+}
+.payment-success-card strong {
+  display: block;
+  font-size: 1.1rem;
+}
+.payment-success-card p {
+  margin: 0.25rem 0 0;
+  color: #3f6865;
+}
+.payment-success-card a {
+  flex: 0 0 auto;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  background: #008482;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 850;
+  text-decoration: none;
+}
 .welcome-block {
   display: flex;
   align-items: center;

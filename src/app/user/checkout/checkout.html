@@ -1,1 +1,154 @@
-<p>checkout works!</p>
+<main class="checkout-page">
+  <nav class="steps" aria-label="Proceso de compra">
+    <span><strong>Carrito</strong></span>
+    <i></i>
+    <span class="active"><strong>Checkout</strong></span>
+    <i></i>
+    <span><strong>Yape</strong></span>
+  </nav>
+
+  <header class="checkout-header">
+    <h1>Checkout</h1>
+    <p>Selecciona tu direccion de entrega y confirma tu pedido.</p>
+  </header>
+
+  @if (feedback()) {
+    <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
+      {{ feedback()?.text }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <section class="state-card">Cargando checkout...</section>
+  } @else if (!cart()?.items?.length) {
+    <section class="state-card">
+      <h2>Tu carrito esta vacio</h2>
+      <p>Agrega productos antes de continuar con el checkout.</p>
+      <a routerLink="/catalog">Ir al catalogo</a>
+    </section>
+  } @else {
+    <section class="checkout-grid">
+      <div class="checkout-main">
+        <section class="panel">
+          <div class="panel-heading">
+            <h2>Direcciones guardadas</h2>
+            <button type="button" (click)="showAddressForm.set(!showAddressForm())">
+              {{ showAddressForm() ? 'Ocultar formulario' : 'Agregar nueva direccion' }}
+            </button>
+          </div>
+
+          @if (addresses().length > 0) {
+            <div class="address-list">
+              @for (address of addresses(); track address.id) {
+                <button
+                  type="button"
+                  class="address-card"
+                  [class.selected]="selectedAddressId() === address.id"
+                  (click)="selectAddress(address.id)"
+                >
+                  <span class="radio-dot"></span>
+                  <span class="address-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M3 10.8 12 3l9 7.8V21h-5v-6H8v6H3z" /></svg>
+                  </span>
+                  <span class="address-copy">
+                    <strong>{{ address.destinatario }}</strong>
+                    @if (address.esPrincipal) {
+                      <em>Principal</em>
+                    }
+                    <small>{{ address.celular }}</small>
+                    <small>{{ address.direccion }}, {{ address.distrito }}</small>
+                    @if (address.referencia) {
+                      <small>{{ address.referencia }}</small>
+                    }
+                  </span>
+                </button>
+              }
+            </div>
+          }
+
+          @if (showAddressForm()) {
+            <form class="address-form" (ngSubmit)="createAddress()">
+              <label>
+                Alias
+                <input name="alias" [(ngModel)]="addressForm.alias" placeholder="Casa" />
+              </label>
+              <label>
+                Destinatario
+                <input name="destinatario" [(ngModel)]="addressForm.destinatario" required />
+              </label>
+              <label>
+                Celular
+                <input name="celular" [(ngModel)]="addressForm.celular" required />
+              </label>
+              <label>
+                Documento
+                <input name="documentoNumero" [(ngModel)]="addressForm.documentoNumero" placeholder="DNI" />
+              </label>
+              <label class="wide">
+                Direccion
+                <input name="direccion" [(ngModel)]="addressForm.direccion" required />
+              </label>
+              <label>
+                Distrito
+                <input name="distrito" [(ngModel)]="addressForm.distrito" required />
+              </label>
+              <label>
+                Referencia
+                <input name="referencia" [(ngModel)]="addressForm.referencia" />
+              </label>
+              <button type="submit" [disabled]="isCreatingAddress()">
+                {{ isCreatingAddress() ? 'Guardando...' : 'Guardar direccion' }}
+              </button>
+            </form>
+          }
+        </section>
+
+        <p class="safe-note">Tu informacion se usara solo para entregar tu pedido.</p>
+      </div>
+
+      <aside class="summary-card">
+        <h2>Resumen del pedido</h2>
+
+        <div class="summary-items">
+          @for (item of cart()!.items; track item.itemId) {
+            <article>
+              @if (item.imagenPrincipalUrl) {
+                <img [src]="item.imagenPrincipalUrl" [alt]="item.nombre" />
+              } @else {
+                <span class="item-placeholder">{{ item.nombre.charAt(0) }}</span>
+              }
+              <div>
+                <strong>{{ item.nombre }}</strong>
+                <small>{{ item.cantidad }} unidad{{ item.cantidad > 1 ? 'es' : '' }}</small>
+              </div>
+              <b>{{ formatPrice(item.subtotal) }}</b>
+            </article>
+          }
+        </div>
+
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <strong>{{ formatPrice(cart()?.subtotal || 0) }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Envio</span>
+          <strong>{{ formatPrice(shippingCost) }}</strong>
+        </div>
+        <div class="summary-total">
+          <span>Total</span>
+          <strong>{{ formatPrice(total) }}</strong>
+        </div>
+
+        <label class="observations">
+          Observaciones
+          <textarea name="observations" [(ngModel)]="observations" rows="3"></textarea>
+        </label>
+
+        <button type="button" class="yape-button" (click)="continueWithYape()" [disabled]="isCheckingOut()">
+          {{ isCheckingOut() ? 'Confirmando...' : 'Continuar con Yape' }}
+        </button>
+        <p class="payment-note">Pago 100% seguro con Yape.</p>
+      </aside>
+    </section>
+  }
+</main>

@@ -5,9 +5,11 @@ import { Home } from './public/home/home';
 import { Dashboard } from './admin/dashboard/dashboard';
 import { UserDashboard } from './user/dashboard/dashboard';
 import { Cart } from './user/cart/cart';
+import { Checkout } from './user/checkout/checkout';
 import { Profile } from './user/profile/profile';
 import { Orders as UserOrders } from './user/orders/orders';
 import { Favorites } from './user/favorites/favorites';
+import { YapePayment } from './user/yape-payment/yape-payment';
 
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
@@ -52,6 +54,16 @@ export const routes: Routes = [
   {
     path: 'user/cart',
     component: Cart,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'user/checkout',
+    component: Checkout,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'user/checkout/yape/:orderId',
+    component: YapePayment,
     canActivate: [authGuard],
   },
   {
