@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 
 import { Order } from '../../core/models/order.model';
 import { UserProfile } from '../../core/models/user.model';
+import { AuthService } from '../../core/services/auth.service';
 import { OrderService } from '../../core/services/order.service';
 import { UserService } from '../../core/services/user.service';
 
@@ -16,10 +17,11 @@ import { UserService } from '../../core/services/user.service';
   styleUrl: './orders.scss',
 })
 export class Orders {
+  private readonly authService = inject(AuthService);
   private readonly orderService = inject(OrderService);
   private readonly userService = inject(UserService);
 
-  user = signal<UserProfile | null>(null);
+  user = signal<UserProfile | null>(this.authService.currentUser() as UserProfile | null);
   orders = signal<Order[]>([]);
   expandedOrderId = signal<number | null>(null);
   orderDetail = signal<Order | null>(null);
@@ -121,7 +123,7 @@ export class Orders {
   private loadUser(): void {
     this.userService
       .getMe()
-      .subscribe({ next: (user) => this.user.set(user), error: () => this.user.set(null) });
+      .subscribe({ next: (user) => this.user.set(user), error: () => undefined });
   }
   private showError(error: unknown, fallback: string): void {
     const httpError = error as HttpErrorResponse;

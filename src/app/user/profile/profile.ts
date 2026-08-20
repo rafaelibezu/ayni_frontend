@@ -11,6 +11,7 @@ import {
   UserAddress,
   UserProfile,
 } from '../../core/models/user.model';
+import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 
 type ProfileTab = 'profile' | 'addresses';
@@ -32,8 +33,9 @@ const EMPTY_ADDRESS: AddressRequest = {
   styleUrl: './profile.scss',
 })
 export class Profile {
+  private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
-  user = signal<UserProfile | null>(null);
+  user = signal<UserProfile | null>(this.authService.currentUser() as UserProfile | null);
   addresses = signal<UserAddress[]>([]);
   activeTab = signal<ProfileTab>('profile');
   isLoading = signal(true);

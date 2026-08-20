@@ -8,6 +8,7 @@ import { Product } from '../../core/models/product.model';
 import { UserProfile } from '../../core/models/user.model';
 
 import { FavoriteService } from '../../core/services/favorite.service';
+import { AuthService } from '../../core/services/auth.service';
 import { OrderService } from '../../core/services/order.service';
 import { ProductService } from '../../core/services/product.service';
 import { UserService } from '../../core/services/user.service';
@@ -19,13 +20,14 @@ import { UserService } from '../../core/services/user.service';
   styleUrl: './dashboard.scss',
 })
 export class UserDashboard {
+  private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
   private readonly orderService = inject(OrderService);
   private readonly favoriteService = inject(FavoriteService);
   private readonly productService = inject(ProductService);
   private readonly route = inject(ActivatedRoute);
 
-  user = signal<UserProfile | null>(null);
+  user = signal<UserProfile | null>(this.authService.currentUser() as UserProfile | null);
   recentOrders = signal<Order[]>([]);
   favorites = signal<Favorite[]>([]);
   recommendedProducts = signal<Product[]>([]);
@@ -41,7 +43,7 @@ export class UserDashboard {
 
     this.userService.getMe().subscribe({
       next: (user) => this.user.set(user),
-      error: () => this.user.set(null),
+      error: () => undefined,
     });
 
     this.orderService.findMyOrders().subscribe({

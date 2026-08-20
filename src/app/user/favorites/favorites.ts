@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 
 import { Favorite } from '../../core/models/favorite.model';
 import { UserProfile } from '../../core/models/user.model';
+import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { FavoriteService } from '../../core/services/favorite.service';
 import { UserService } from '../../core/services/user.service';
@@ -17,11 +18,12 @@ import { UserService } from '../../core/services/user.service';
   styleUrl: './favorites.scss',
 })
 export class Favorites {
+  private readonly authService = inject(AuthService);
   private readonly favoriteService = inject(FavoriteService);
   private readonly cartService = inject(CartService);
   private readonly userService = inject(UserService);
 
-  user = signal<UserProfile | null>(null);
+  user = signal<UserProfile | null>(this.authService.currentUser() as UserProfile | null);
   favorites = signal<Favorite[]>([]);
   isLoading = signal(true);
   removingProductId = signal<number | null>(null);
@@ -101,7 +103,7 @@ export class Favorites {
   private loadUser(): void {
     this.userService
       .getMe()
-      .subscribe({ next: (user) => this.user.set(user), error: () => this.user.set(null) });
+      .subscribe({ next: (user) => this.user.set(user), error: () => undefined });
   }
 
   private showError(error: unknown, fallback: string): void {
