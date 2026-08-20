@@ -1,1 +1,456 @@
-<p>products works!</p>
+<div class="products-page">
+  <section class="page-header">
+    <div>
+      <span class="eyebrow">Catalogo</span>
+      <h1>Gestion de productos</h1>
+      <p>Administra inventario, precios, categorias y visibilidad comercial.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="primary-action" (click)="openCreateModal()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14"></path>
+          <path d="M5 12h14"></path>
+        </svg>
+        Nuevo producto
+      </button>
+
+      <button type="button" class="outline-action">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v12"></path>
+          <path d="m7 8 5-5 5 5"></path>
+          <path d="M5 21h14"></path>
+        </svg>
+        Importar
+      </button>
+
+      <button type="button" class="outline-action">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 21V9"></path>
+          <path d="m7 16 5 5 5-5"></path>
+          <path d="M5 3h14"></path>
+        </svg>
+        Exportar
+      </button>
+    </div>
+  </section>
+
+  @if (successMessage()) {
+    <div class="alert-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <section class="products-layout">
+    <div class="main-panel">
+      <article class="filters-card">
+        <div class="filters-top">
+          <div class="search-input">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Buscar por nombre, SKU o categoria..."
+              [ngModel]="searchTerm()"
+              (ngModelChange)="searchTerm.set($event)"
+            />
+          </div>
+
+          <button type="button" class="clear-button" (click)="clearFilters()">
+            Limpiar filtros
+          </button>
+        </div>
+
+        <div class="filters-grid">
+          <label>
+            <span>Categoria</span>
+            <select
+              [ngModel]="categoryFilter()"
+              (ngModelChange)="categoryFilter.set($event)"
+            >
+              <option value="ALL">Todas</option>
+              @for (category of categories(); track category.id) {
+                <option [value]="category.slug">{{ category.nombre }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Estado</span>
+            <select
+              [ngModel]="statusFilter()"
+              (ngModelChange)="statusFilter.set($event)"
+            >
+              <option value="ALL">Todos</option>
+              <option value="ACTIVE">Activos</option>
+              <option value="INACTIVE">Inactivos</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Destacados</span>
+            <select
+              [ngModel]="featuredFilter()"
+              (ngModelChange)="featuredFilter.set($event)"
+            >
+              <option value="ALL">Todos</option>
+              <option value="YES">Destacados</option>
+              <option value="NO">No destacados</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Stock</span>
+            <select
+              [ngModel]="stockFilter()"
+              (ngModelChange)="stockFilter.set($event)"
+            >
+              <option value="ALL">Todos</option>
+              <option value="LOW">Bajo stock</option>
+              <option value="OUT">Agotados</option>
+            </select>
+          </label>
+        </div>
+      </article>
+
+      <article class="table-card">
+        <div class="table-toolbar">
+          <div>
+            <h2>Inventario</h2>
+            <p>{{ filteredProducts.length }} productos visibles de {{ totalProducts }} registrados</p>
+          </div>
+        </div>
+
+        @if (isLoading()) {
+          <div class="loading-box">
+            Cargando productos...
+          </div>
+        } @else if (filteredProducts.length > 0) {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>SKU</th>
+                  <th>Categoria</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Destacado</th>
+                  <th>Estado</th>
+                  <th class="actions-col">Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (product of filteredProducts; track product.id) {
+                  <tr>
+                    <td>
+                      <div class="product-cell">
+                        <div class="product-image">
+                          @if (product.imagenPrincipalUrl) {
+                            <img [src]="product.imagenPrincipalUrl" [alt]="product.nombre" />
+                          } @else {
+                            <span>{{ product.nombre.charAt(0) }}</span>
+                          }
+                        </div>
+
+                        <div>
+                          <strong>{{ product.nombre }}</strong>
+                          <span>{{ product.slug }}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td class="mono">{{ product.sku }}</td>
+
+                    <td>
+                      <span class="category-badge">
+                        {{ product.categoriaNombre }}
+                      </span>
+                    </td>
+
+                    <td>
+                      <strong>{{ formatPrice(product.precio) }}</strong>
+                    </td>
+
+                    <td>
+                      <button
+                        type="button"
+                        class="stock-button"
+                        [ngClass]="stockClass(product)"
+                        (click)="updateStock(product)"
+                      >
+                        {{ product.stock }} unidades
+                      </button>
+                    </td>
+
+                    <td>
+                      <span class="featured-pill" [class.active]="product.destacado">
+                        {{ product.destacado ? 'Si' : 'No' }}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span class="status-pill" [class.inactive]="!product.activo">
+                        {{ product.activo ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div class="action-buttons">
+                        <button type="button" title="Editar" (click)="openEditModal(product)">
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                          </svg>
+                        </button>
+
+                        <button type="button" title="Activar o desactivar" (click)="toggleStatus(product)">
+                          @if (product.activo) {
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M18.4 5.6a9 9 0 1 1-12.8 0"></path>
+                              <path d="M12 2v10"></path>
+                            </svg>
+                          } @else {
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                          }
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            Mostrando {{ filteredProducts.length }} de {{ totalProducts }} productos
+          </div>
+        } @else {
+          <div class="empty-state">
+            No se encontraron productos con los filtros seleccionados.
+          </div>
+        }
+      </article>
+    </div>
+
+    <aside class="summary-panel">
+      <article class="summary-card">
+        <div class="summary-header">
+          <h2>Indicadores</h2>
+          <p>Estado actual del catalogo</p>
+        </div>
+
+        <div class="summary-item">
+          <span class="icon cyan">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path>
+              <path d="M8 9h8"></path>
+              <path d="M8 13h5"></path>
+            </svg>
+          </span>
+          <div>
+            <p>Total productos</p>
+            <strong>{{ totalProducts }}</strong>
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <span class="icon green">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          </span>
+          <div>
+            <p>Productos activos</p>
+            <strong>{{ activeProducts }}</strong>
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <span class="icon orange">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 9v4"></path>
+              <path d="M12 17h.01"></path>
+              <circle cx="12" cy="12" r="9"></circle>
+            </svg>
+          </span>
+          <div>
+            <p>Bajo stock</p>
+            <strong>{{ lowStockProducts }}</strong>
+          </div>
+        </div>
+
+        <div class="summary-item">
+          <span class="icon yellow">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z"></path>
+            </svg>
+          </span>
+          <div>
+            <p>Destacados</p>
+            <strong>{{ featuredProducts }}</strong>
+          </div>
+        </div>
+      </article>
+    </aside>
+  </section>
+
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <article class="product-modal">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">{{ editingProduct() ? 'Edicion' : 'Nuevo registro' }}</span>
+            <h2>{{ editingProduct() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+            <p>Completa los datos necesarios para publicar o actualizar el producto.</p>
+          </div>
+
+          <button type="button" (click)="closeModal()" title="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form (ngSubmit)="saveProduct()" class="product-form">
+          <div class="form-grid">
+            <label>
+              <span>Nombre</span>
+              <input
+                type="text"
+                name="nombre"
+                [(ngModel)]="form.nombre"
+                placeholder="Ej. Elixir botanico"
+              />
+            </label>
+
+            <label>
+              <span>SKU</span>
+              <input
+                type="text"
+                name="sku"
+                [(ngModel)]="form.sku"
+                placeholder="SKU-001"
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Descripcion</span>
+            <textarea
+              name="descripcion"
+              [(ngModel)]="form.descripcion"
+              placeholder="Describe el producto..."
+            ></textarea>
+          </label>
+
+          <div class="form-grid">
+            <label>
+              <span>Categoria</span>
+              <select name="categoriaId" [(ngModel)]="form.categoriaId">
+                <option [ngValue]="0">Seleccionar categoria</option>
+                @for (category of categories(); track category.id) {
+                  <option [ngValue]="category.id">{{ category.nombre }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              <span>Badge</span>
+              <input
+                type="text"
+                name="badge"
+                [(ngModel)]="form.badge"
+                placeholder="Nuevo, Oferta, Bestseller"
+              />
+            </label>
+          </div>
+
+          <div class="form-grid three-cols">
+            <label>
+              <span>Precio</span>
+              <input
+                type="number"
+                name="precio"
+                [(ngModel)]="form.precio"
+                min="0"
+              />
+            </label>
+
+            <label>
+              <span>Precio comparacion</span>
+              <input
+                type="number"
+                name="precioComparacion"
+                [(ngModel)]="form.precioComparacion"
+                min="0"
+              />
+            </label>
+
+            <label>
+              <span>Stock</span>
+              <input
+                type="number"
+                name="stock"
+                [(ngModel)]="form.stock"
+                min="0"
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Imagen principal URL</span>
+            <input
+              type="text"
+              name="imagenPrincipalUrl"
+              [(ngModel)]="form.imagenPrincipalUrl"
+              placeholder="/assets/img/products/producto.png"
+            />
+          </label>
+
+          <div class="switch-row">
+            <label class="switch-label">
+              <input
+                type="checkbox"
+                name="destacado"
+                [(ngModel)]="form.destacado"
+              />
+              <span>Producto destacado</span>
+            </label>
+
+            <label class="switch-label">
+              <input
+                type="checkbox"
+                name="activo"
+                [(ngModel)]="form.activo"
+              />
+              <span>Producto activo</span>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="cancel-button" (click)="closeModal()">
+              Cancelar
+            </button>
+
+            <button type="submit" class="save-button" [disabled]="isSaving()">
+              {{ isSaving() ? 'Guardando...' : 'Guardar producto' }}
+            </button>
+          </div>
+        </form>
+      </article>
+    </div>
+  }
+</div>
