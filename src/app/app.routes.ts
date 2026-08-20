@@ -14,6 +14,12 @@ import { YapePayment } from './user/yape-payment/yape-payment';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { AdminLayout } from './admin/layout/admin-layout/admin-layout';
+import { Products } from './admin/products/products';
+import { Categories } from './admin/categories/categories';
+import { Orders as AdminOrders } from './admin/orders/orders';
+import { Payments } from './admin/payments/payments';
+import { Users } from './admin/users/users';
 
 export const routes: Routes = [
   {
@@ -41,11 +47,7 @@ export const routes: Routes = [
     path: 'home',
     component: Home,
   },
-  {
-    path: 'admin/dashboard',
-    component: Dashboard,
-    canActivate: [authGuard, adminGuard],
-  },
+
   {
     path: 'user/dashboard',
     component: UserDashboard,
@@ -81,6 +83,44 @@ export const routes: Routes = [
     component: Favorites,
     canActivate: [authGuard],
   },
+
+  {
+    path: 'admin',
+    component: AdminLayout,
+    canActivate: [authGuard, adminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        component: Dashboard,
+      },
+      {
+        path: 'products',
+        component: Products,
+      },
+      {
+        path: 'categories',
+        component: Categories,
+      },
+      {
+        path: 'orders',
+        component: AdminOrders,
+      },
+      {
+        path: 'payments',
+        component: Payments,
+      },
+      {
+        path: 'users',
+        component: Users,
+      },
+    ],
+  },
+
   {
     path: '**',
     redirectTo: 'home',

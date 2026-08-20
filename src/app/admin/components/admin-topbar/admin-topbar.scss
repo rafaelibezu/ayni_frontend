@@ -1,0 +1,153 @@
+.admin-topbar {
+  height: 88px;
+  padding: 0 2.5rem;
+  display: grid;
+  grid-template-columns: 42px minmax(320px, 560px) 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid #f1d8d5;
+  background: rgba(255, 250, 250, 0.86);
+  backdrop-filter: blur(14px);
+}
+
+.menu-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 0.8rem;
+  display: grid;
+  place-items: center;
+  color: #6a4d49;
+  transition: background-color 0.2s ease;
+}
+
+.menu-button:hover {
+  background: #fff1ef;
+}
+
+.menu-button svg,
+.search-box svg,
+.notification-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.search-box {
+  height: 52px;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  border: 1px solid #ead7d4;
+  border-radius: 1rem;
+  padding: 0 1rem;
+  color: #94807d;
+  background: white;
+}
+
+.search-box input {
+  width: 100%;
+  outline: none;
+  background: transparent;
+  color: #241818;
+  font-size: 0.95rem;
+}
+
+.search-box span {
+  font-size: 0.8rem;
+  color: #9b817d;
+}
+
+.topbar-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.notification-button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #5c3e3b;
+}
+
+.notification-button:hover {
+  background: #fff1ef;
+}
+
+.notification-button span {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #ff5d5b;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #ffcbc6, #bd3732);
+  color: white;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.admin-profile strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #241818;
+}
+
+.admin-profile p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #7a6461;
+}
+
+.admin-profile button {
+  padding: 0.35rem;
+  color: #6a4d49;
+}
+
+@media (max-width: 768px) {
+  .admin-topbar {
+    grid-template-columns: 42px 1fr;
+    padding: 0 1.2rem;
+  }
+
+  .search-box {
+    display: none;
+  }
+
+  .topbar-actions {
+    justify-content: flex-end;
+  }
+
+  .admin-profile div:not(.avatar) {
+    display: none;
+  }
+}

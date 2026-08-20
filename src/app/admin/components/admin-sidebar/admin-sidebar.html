@@ -1,1 +1,80 @@
-<p>admin-sidebar works!</p>
+<aside class="admin-sidebar">
+  <div>
+    <a routerLink="/admin/dashboard" class="brand">
+      <img src="/assets/logo/ayni_logo.png" alt="Ayni" />
+    </a>
+
+    <nav class="sidebar-nav">
+      @for (item of menuItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-item"
+        >
+          <span class="nav-icon">
+            @switch (item.icon) {
+              @case ('grid') {
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                  <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                  <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                  <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                </svg>
+              }
+
+              @case ('tag') {
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"></path>
+                  <circle cx="8" cy="8" r="1.5"></circle>
+                </svg>
+              }
+
+              @case ('folder') {
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
+                </svg>
+              }
+
+              @case ('bag') {
+                <svg viewBox="0 0 24 24">
+                  <path d="M6 8h12l1 12H5L6 8Z"></path>
+                  <path d="M9 8a3 3 0 0 1 6 0"></path>
+                </svg>
+              }
+
+              @case ('wallet') {
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 7h16v12H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14"></path>
+                  <path d="M16 13h4"></path>
+                </svg>
+              }
+
+              @case ('users') {
+                <svg viewBox="0 0 24 24">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              }
+            }
+          </span>
+
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </div>
+
+  <div class="support-box">
+    <div class="support-icon">?</div>
+
+    <div>
+      <p>¿Necesitas ayuda?</p>
+      <span>Soporte Ayni</span>
+    </div>
+
+    <strong>›</strong>
+  </div>
+</aside>

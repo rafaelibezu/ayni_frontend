@@ -1,1 +1,11 @@
-<p>admin-layout works!</p>
+<div class="admin-shell">
+  <app-admin-sidebar />
+
+  <main class="admin-main">
+    <app-admin-topbar />
+
+    <section class="admin-content">
+      <router-outlet />
+    </section>
+  </main>
+</div>
