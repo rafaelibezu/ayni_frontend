@@ -32,7 +32,7 @@ export class AdminSidebar {
       icon: 'folder',
     },
     {
-      label: 'Pedidos',
+      label: 'Órdenes',
       route: '/admin/orders',
       icon: 'bag',
     },
