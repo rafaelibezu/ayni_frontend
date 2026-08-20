@@ -1,6 +1,6 @@
 <header class="admin-topbar">
-  <button type="button" class="menu-button" title="Menú">
-    <svg viewBox="0 0 24 24">
+  <button type="button" class="menu-button" title="Menu">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4 7h16"></path>
       <path d="M4 12h16"></path>
       <path d="M4 17h16"></path>
@@ -8,7 +8,7 @@
   </button>
 
   <div class="search-box">
-    <svg viewBox="0 0 24 24">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="11" cy="11" r="7"></circle>
       <path d="m21 21-4.3-4.3"></path>
     </svg>
@@ -18,12 +18,12 @@
       placeholder="Buscar pedidos, productos, clientes..."
     />
 
-    <span>⌘ K</span>
+    <span>Ctrl K</span>
   </div>
 
   <div class="topbar-actions">
     <button type="button" class="notification-button" title="Notificaciones">
-      <svg viewBox="0 0 24 24">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path>
         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
       </svg>
@@ -41,8 +41,10 @@
         <p>Administrador</p>
       </div>
 
-      <button type="button" (click)="logout()" title="Cerrar sesión">
-        ˅
+      <button type="button" (click)="logout()" title="Cerrar sesion">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6"></path>
+        </svg>
       </button>
     </div>
   </div>
