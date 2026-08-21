@@ -1,1 +1,432 @@
-<p>users works!</p>
+<div class="users-page">
+  <section class="page-header">
+    <div>
+      <span class="eyebrow">Accesos</span>
+      <h1>Gestion de usuarios</h1>
+      <p>Administra clientes, permisos administrativos y estados de cuenta.</p>
+    </div>
+
+    <button type="button" class="primary-action" (click)="openCreateModal()">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </svg>
+      Nuevo administrador
+    </button>
+  </section>
+
+  @if (successMessage()) {
+    <div class="alert-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <section class="stats-grid">
+    <article class="stat-card">
+      <span class="stat-icon cyan">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </span>
+      <div>
+        <p>Total usuarios</p>
+        <strong>{{ totalUsers }}</strong>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon green">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+      </span>
+      <div>
+        <p>Activos</p>
+        <strong>{{ activeUsers }}</strong>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon red">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+        </svg>
+      </span>
+      <div>
+        <p>Administradores</p>
+        <strong>{{ adminUsers }}</strong>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon orange">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 21a8 8 0 0 0-16 0"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </span>
+      <div>
+        <p>Clientes</p>
+        <strong>{{ clientUsers }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section class="filters-card">
+    <div class="filters-top">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <input
+          type="text"
+          placeholder="Buscar por nombre, correo o celular..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+      </div>
+
+      <label class="filter-field">
+        <span>Estado</span>
+        <select
+          [ngModel]="statusFilter()"
+          (ngModelChange)="statusFilter.set($event)"
+        >
+          <option value="ALL">Todos</option>
+          <option value="ACTIVE">Activos</option>
+          <option value="INACTIVE">Inactivos</option>
+        </select>
+      </label>
+
+      <label class="filter-field">
+        <span>Rol</span>
+        <select
+          [ngModel]="roleFilter()"
+          (ngModelChange)="roleFilter.set($event)"
+        >
+          <option value="ALL">Todos</option>
+          <option value="ADMIN">Administradores</option>
+          <option value="USER">Clientes</option>
+        </select>
+      </label>
+
+      <button type="button" class="clear-button" (click)="clearFilters()">
+        Limpiar filtros
+      </button>
+    </div>
+  </section>
+
+  <section class="users-card">
+    <div class="table-toolbar">
+      <div>
+        <h2>Usuarios registrados</h2>
+        <p>{{ filteredUsers.length }} usuarios visibles de {{ totalUsers }} registrados</p>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-box">
+        Cargando usuarios...
+      </div>
+    } @else if (filteredUsers.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Contacto</th>
+              <th>Roles</th>
+              <th>Proveedor</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (user of filteredUsers; track user.id) {
+              <tr>
+                <td>
+                  <div class="user-cell">
+                    <div class="avatar">{{ initials(user) }}</div>
+
+                    <div>
+                      <strong>{{ fullName(user) }}</strong>
+                      <span>ID #{{ user.id }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="contact-cell">
+                    <strong>{{ user.email }}</strong>
+                    <span>{{ user.celular || 'Sin celular' }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="roles-list">
+                    @for (role of user.roles; track role) {
+                      <span class="role-pill" [class.admin]="role === 'ADMIN'">
+                        {{ roleLabel(role) }}
+                      </span>
+                    }
+                  </div>
+                </td>
+
+                <td>
+                  <span class="provider-pill">
+                    {{ user.proveedorAuth || 'LOCAL' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="status-pill" [class.inactive]="!user.activo">
+                    {{ user.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+
+                <td>{{ formatDate(user.creadoEn) }}</td>
+
+                <td>
+                  <div class="action-buttons">
+                    <button type="button" title="Ver detalle" (click)="openDetail(user.id)">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="danger"
+                      [class.activate]="!user.activo"
+                      title="Activar o desactivar"
+                      (click)="toggleStatus(user)"
+                    >
+                      @if (user.activo) {
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M18.4 5.6a9 9 0 1 1-12.8 0"></path>
+                          <path d="M12 2v10"></path>
+                        </svg>
+                      } @else {
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                      }
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        Mostrando {{ filteredUsers.length }} de {{ totalUsers }} usuarios
+      </div>
+    } @else {
+      <div class="empty-state">
+        No se encontraron usuarios con los filtros seleccionados.
+      </div>
+    }
+  </section>
+
+  @if (isModalOpen()) {
+    <div class="modal-backdrop">
+      <article class="user-modal">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Nuevo acceso</span>
+            <h2>Nuevo administrador</h2>
+            <p>Crea un usuario con permisos para gestionar el panel Ayni.</p>
+          </div>
+
+          <button type="button" (click)="closeCreateModal()" title="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form (ngSubmit)="createAdmin()" class="user-form">
+          <div class="form-grid">
+            <label>
+              <span>Nombres</span>
+              <input
+                type="text"
+                name="nombres"
+                [(ngModel)]="form.nombres"
+                placeholder="Ej. Marcela"
+              />
+            </label>
+
+            <label>
+              <span>Apellidos</span>
+              <input
+                type="text"
+                name="apellidos"
+                [(ngModel)]="form.apellidos"
+                placeholder="Ej. Sanchez"
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Correo electronico</span>
+            <input
+              type="email"
+              name="email"
+              [(ngModel)]="form.email"
+              placeholder="admin@ayni.com"
+            />
+          </label>
+
+          <div class="form-grid">
+            <label>
+              <span>Celular</span>
+              <input
+                type="text"
+                name="celular"
+                [(ngModel)]="form.celular"
+                placeholder="999999999"
+              />
+            </label>
+
+            <label>
+              <span>Contrasena temporal</span>
+              <input
+                type="password"
+                name="password"
+                [(ngModel)]="form.password"
+                placeholder="Minimo 6 caracteres"
+              />
+            </label>
+          </div>
+
+          <div class="warning-box">
+            Este usuario sera creado con rol <strong>Administrador</strong> y acceso al portal administrativo.
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="cancel-button" (click)="closeCreateModal()">
+              Cancelar
+            </button>
+
+            <button type="submit" class="save-button" [disabled]="isSaving()">
+              {{ isSaving() ? 'Creando...' : 'Crear administrador' }}
+            </button>
+          </div>
+        </form>
+      </article>
+    </div>
+  }
+
+  @if (selectedUser()) {
+    <div class="modal-backdrop">
+      <article class="user-modal">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Detalle de cuenta</span>
+            <h2>{{ fullName(selectedUser()) }}</h2>
+            <p>{{ selectedUser()?.email }}</p>
+          </div>
+
+          <button type="button" (click)="closeDetail()" title="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        @if (isDetailLoading()) {
+          <div class="loading-box">
+            Cargando detalle...
+          </div>
+        } @else {
+          <section class="detail-profile">
+            <div class="detail-avatar">
+              {{ selectedUser() ? initials(selectedUser()!) : 'A' }}
+            </div>
+
+            <div>
+              <h3>{{ fullName(selectedUser()) }}</h3>
+              <p>{{ selectedUser()?.email }}</p>
+
+              <div class="roles-list">
+                @for (role of selectedUser()?.roles || []; track role) {
+                  <span class="role-pill" [class.admin]="role === 'ADMIN'">
+                    {{ roleLabel(role) }}
+                  </span>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-grid">
+            <div class="detail-box">
+              <p>Celular</p>
+              <strong>{{ selectedUser()?.celular || 'No registrado' }}</strong>
+            </div>
+
+            <div class="detail-box">
+              <p>Documento</p>
+              <strong>
+                {{ selectedUser()?.documentoTipo || '-' }}
+                {{ selectedUser()?.documentoNumero || '' }}
+              </strong>
+            </div>
+
+            <div class="detail-box">
+              <p>Proveedor</p>
+              <strong>{{ selectedUser()?.proveedorAuth || 'LOCAL' }}</strong>
+            </div>
+
+            <div class="detail-box">
+              <p>Email verificado</p>
+              <strong>{{ selectedUser()?.emailVerificado ? 'Si' : 'No' }}</strong>
+            </div>
+
+            <div class="detail-box">
+              <p>Estado</p>
+              <strong>{{ selectedUser()?.activo ? 'Activo' : 'Inactivo' }}</strong>
+            </div>
+
+            <div class="detail-box">
+              <p>Creado</p>
+              <strong>{{ formatDate(selectedUser()?.creadoEn) }}</strong>
+            </div>
+          </section>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="danger-button"
+              [class.activate]="!selectedUser()?.activo"
+              (click)="selectedUser() && toggleStatus(selectedUser()!)"
+            >
+              {{ selectedUser()?.activo ? 'Desactivar usuario' : 'Activar usuario' }}
+            </button>
+
+            <button type="button" class="cancel-button" (click)="closeDetail()">
+              Cerrar
+            </button>
+          </div>
+        }
+      </article>
+    </div>
+  }
+</div>

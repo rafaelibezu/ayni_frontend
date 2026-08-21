@@ -1,1 +1,362 @@
-<p>payments works!</p>
+<div class="payments-page">
+  <section class="page-header">
+    <div>
+      <span class="eyebrow">Tesoreria</span>
+      <h1>Validacion de pagos Yape</h1>
+      <p>Revisa comprobantes, operaciones y confirma pagos de clientes.</p>
+    </div>
+
+    <button type="button" class="outline-action" (click)="loadPayments()">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12a9 9 0 0 1-15.3 6.4"></path>
+        <path d="M3 12A9 9 0 0 1 18.3 5.6"></path>
+        <path d="M21 5v6h-6"></path>
+        <path d="M3 19v-6h6"></path>
+      </svg>
+      Actualizar
+    </button>
+  </section>
+
+  @if (successMessage()) {
+    <div class="alert-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <section class="stats-grid">
+    <article class="stat-card">
+      <span class="stat-icon cyan">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+          <path d="M3 10h18"></path>
+          <path d="M7 15h4"></path>
+        </svg>
+      </span>
+      <div>
+        <p>Total pagos</p>
+        <strong>{{ totalPayments }}</strong>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon orange">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v5l3 2"></path>
+        </svg>
+      </span>
+      <div>
+        <p>En revision</p>
+        <strong>{{ reviewPayments }}</strong>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon green">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+      </span>
+      <div>
+        <p>Validados</p>
+        <strong>{{ validatedPayments }}</strong>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-icon red">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </span>
+      <div>
+        <p>Rechazados</p>
+        <strong>{{ rejectedPayments }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section class="filters-card">
+    <div class="filters-top">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <input
+          type="text"
+          placeholder="Buscar por pedido, cliente, correo u operacion..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+      </div>
+
+      <label class="filter-field">
+        <span>Estado</span>
+        <select
+          [ngModel]="statusFilter()"
+          (ngModelChange)="statusFilter.set($event)"
+        >
+          <option value="ALL">Todos</option>
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ formatStatus(status) }}</option>
+          }
+        </select>
+      </label>
+
+      <button type="button" class="clear-button" (click)="clearFilters()">
+        Limpiar filtros
+      </button>
+    </div>
+  </section>
+
+  <section class="payments-card">
+    <div class="table-toolbar">
+      <div>
+        <h2>Pagos registrados</h2>
+        <p>{{ filteredPayments.length }} pagos visibles de {{ totalPayments }} registrados</p>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-box">
+        Cargando pagos Yape...
+      </div>
+    } @else if (filteredPayments.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Pago</th>
+              <th>Orden</th>
+              <th>Cliente</th>
+              <th>Monto</th>
+              <th>Estado</th>
+              <th>Comprobante</th>
+              <th>Fecha</th>
+              <th class="actions-col">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (payment of filteredPayments; track payment.id) {
+              <tr>
+                <td>
+                  <div class="payment-code">
+                    <strong class="mono">#{{ payment.id }}</strong>
+                    <span>{{ payment.metodoPago || 'YAPE' }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  <strong class="mono">{{ payment.codigoPedido }}</strong>
+                </td>
+
+                <td>
+                  <div class="client-cell">
+                    <strong>{{ payment.clienteNombre }}</strong>
+                    @if (payment.clienteEmail) {
+                      <span>{{ payment.clienteEmail }}</span>
+                    }
+                  </div>
+                </td>
+
+                <td>
+                  <strong>{{ formatPrice(payment.monto) }}</strong>
+                </td>
+
+                <td>
+                  <span class="status-badge" [ngClass]="statusClass(payment.estado)">
+                    {{ formatStatus(payment.estado) }}
+                  </span>
+                </td>
+
+                <td>
+                  @if (payment.comprobanteUrl) {
+                    <a
+                      [href]="payment.comprobanteUrl"
+                      target="_blank"
+                      class="receipt-link"
+                    >
+                      Ver comprobante
+                    </a>
+                  } @else {
+                    <span class="muted">Sin comprobante</span>
+                  }
+                </td>
+
+                <td>{{ formatDate(payment.creadoEn) }}</td>
+
+                <td>
+                  <div class="action-buttons">
+                    <button type="button" title="Ver detalle" (click)="openDetail(payment)">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+
+                    @if (canReview(payment)) {
+                      <button
+                        type="button"
+                        class="success"
+                        title="Validar pago"
+                        (click)="validatePayment(payment)"
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M20 6 9 17l-5-5"></path>
+                        </svg>
+                      </button>
+
+                      <button
+                        type="button"
+                        class="danger"
+                        title="Rechazar pago"
+                        (click)="rejectPayment(payment)"
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M18 6 6 18"></path>
+                          <path d="m6 6 12 12"></path>
+                        </svg>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        Mostrando {{ filteredPayments.length }} de {{ totalPayments }} pagos
+      </div>
+    } @else {
+      <div class="empty-state">
+        No se encontraron pagos Yape con los filtros seleccionados.
+      </div>
+    }
+  </section>
+
+  @if (selectedPayment()) {
+    <div class="modal-backdrop">
+      <article class="payment-modal">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">Detalle financiero</span>
+            <h2>Pago {{ selectedPayment()?.codigoPedido }}</h2>
+            <p>Validacion de comprobante, monto y numero de operacion.</p>
+          </div>
+
+          <button type="button" (click)="closeDetail()" title="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <section class="detail-grid">
+          <div class="detail-box">
+            <p>Cliente</p>
+            <strong>{{ selectedPayment()?.clienteNombre }}</strong>
+            @if (selectedPayment()?.clienteEmail) {
+              <span>{{ selectedPayment()?.clienteEmail }}</span>
+            }
+          </div>
+
+          <div class="detail-box">
+            <p>Monto</p>
+            <strong>{{ formatPrice(selectedPayment()?.monto) }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <p>Operacion</p>
+            <strong>{{ selectedPayment()?.numeroOperacion || 'No registrado' }}</strong>
+          </div>
+
+          <div class="detail-box">
+            <p>Estado</p>
+            <strong>{{ formatStatus(selectedPayment()?.estado) }}</strong>
+          </div>
+        </section>
+
+        <section class="receipt-card">
+          <div>
+            <h3>Comprobante enviado</h3>
+            <p>Verifica que operacion, fecha y monto coincidan con la orden.</p>
+          </div>
+
+          @if (selectedPayment()?.comprobanteUrl) {
+            <a
+              [href]="selectedPayment()?.comprobanteUrl"
+              target="_blank"
+              class="primary-action"
+            >
+              Abrir comprobante
+            </a>
+          } @else {
+            <span class="muted">El cliente aun no adjunto comprobante.</span>
+          }
+        </section>
+
+        <section class="validation-card">
+          <div>
+            <h3>Actualizar validacion</h3>
+            <p>Al validar el pago, la orden quedara como pagada segun el backend.</p>
+          </div>
+
+          <div class="validation-form">
+            <label>
+              <span>Nuevo estado</span>
+              <select
+                [ngModel]="newStatus()"
+                (ngModelChange)="newStatus.set($event)"
+              >
+                <option value="VALIDADO">Validado</option>
+                <option value="RECHAZADO">Rechazado</option>
+                <option value="FALLIDO">Fallido</option>
+                <option value="EN_REVISION">En revision</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Observacion</span>
+              <textarea
+                [ngModel]="observation()"
+                (ngModelChange)="observation.set($event)"
+                placeholder="Ej. Pago confirmado correctamente."
+              ></textarea>
+            </label>
+          </div>
+        </section>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="closeDetail()"
+          >
+            Cerrar
+          </button>
+
+          <button
+            type="button"
+            class="save-button"
+            [disabled]="isUpdating()"
+            (click)="updateStatus()"
+          >
+            {{ isUpdating() ? 'Guardando...' : 'Guardar validacion' }}
+          </button>
+        </div>
+      </article>
+    </div>
+  }
+</div>
