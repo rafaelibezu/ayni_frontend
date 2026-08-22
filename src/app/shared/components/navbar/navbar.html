@@ -59,12 +59,19 @@
         </svg>
       </a>
 
-      <a routerLink="/user/cart" class="icon-button" title="Carrito">
+      <!-- Carrito con indicador numérico dinámico -->
+      <a routerLink="/user/cart" class="icon-button relative" title="Carrito">
         <svg width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
           <circle cx="9" cy="21" r="1"></circle>
           <circle cx="20" cy="21" r="1"></circle>
           <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
         </svg>
+        
+        @if (cartItemCount() > 0) {
+          <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#bd3732] text-[10px] font-bold text-white">
+            {{ cartItemCount() }}
+          </span>
+        }
       </a>
 
       <div class="relative">

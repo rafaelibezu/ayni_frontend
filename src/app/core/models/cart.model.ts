@@ -3,22 +3,25 @@ export interface AddCartItemRequest {
   cantidad: number;
 }
 
-export interface CartItem {
-  itemId: number;
+export interface UpdateCartItemRequest {
+  cantidad: number;
+}
+
+export interface CartItemResponse {
+  itemId?: number; // Es opcional porque en LocalStorage no tendremos este ID de la BD
   productId: number;
   nombre: string;
   slug: string;
-  imagenPrincipalUrl: string | null;
-  precioUnitario: number;
+  imagenPrincipalUrl: string;
   cantidad: number;
+  precioUnitario: number;
   subtotal: number;
   stock: number;
 }
 
-export interface Cart {
-  cartId: number;
-  items: CartItem[];
+export interface CartResponse {
+  cartId?: number;
+  items: CartItemResponse[];
   totalItems: number;
   subtotal: number;
-  timestamp?: string;
 }

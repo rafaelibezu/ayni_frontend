@@ -1,7 +1,7 @@
 .chatbot-container {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 24px;
+  right: 24px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -10,38 +10,54 @@
 }
 
 .floating-btn {
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
-  background-color: #7702FF; // Color principal
-  color: white;
+  background-color: #bd3732; // Color Ayni Terracota
   border: none;
-  font-size: 24px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  box-shadow: 0 6px 16px rgba(189, 55, 50, 0.3);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
+  }
+
+  .floating-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
 .chat-window {
-  width: 350px;
-  height: 500px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+  width: 380px;
+  height: 550px;
+  max-height: 80vh;
+  background: #fff7f6; // Fondo cálido de Ayni
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #f0d6d2;
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .chat-header {
-  background-color: #7702FF;
+  background-color: #bd3732; // Ayni Terracota
   color: white;
-  padding: 15px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -49,10 +65,20 @@
   .bot-info {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     
-    .avatar { font-size: 24px; }
-    .bot-name { font-weight: bold; }
+    .avatar-img { 
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .bot-name { 
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: 0.3px;
+    }
   }
 
   .close-btn {
@@ -60,75 +86,134 @@
     border: none;
     color: white;
     cursor: pointer;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    
+    &:hover { opacity: 1; }
   }
 }
 
 .chat-messages {
   flex: 1;
-  padding: 15px;
+  padding: 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  background-color: #f9f9f9;
+  gap: 12px;
+  background-color: #fff7f6;
+  
+  /* Ocultar scrollbar clásico */
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: #f0d6d2; border-radius: 10px; }
+}
+
+.message-wrapper {
+  display: flex;
+  width: 100%;
 }
 
 .bubble {
-  padding: 10px 15px;
-  border-radius: 18px;
-  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 20px;
   font-size: 14px;
-  line-height: 1.4;
-  word-wrap: break-word;
+  line-height: 1.5;
+  max-width: 85%;
+  word-break: break-word; /* FIX: Evita el texto vertical rompiendo palabras largas */
+  white-space: pre-wrap;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .message-bot {
-  align-self: flex-start;
+  justify-content: flex-start;
   .bubble {
-    background-color: #e5e5ea;
-    color: black;
-    border-bottom-left-radius: 5px;
+    background-color: white;
+    color: #4c3a3a; // Gris cálido Ayni
+    border-bottom-left-radius: 4px;
+    border: 1px solid #f0d6d2;
   }
 }
 
 .message-user {
-  align-self: flex-end;
+  justify-content: flex-end;
   .bubble {
-    background-color: #7702FF;
+    background-color: #bd3732; // Ayni Terracota
     color: white;
-    border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 4px;
   }
 }
 
 .chat-input-area {
   display: flex;
-  padding: 10px;
-  border-top: 1px solid #e0e0e0;
+  padding: 15px;
   background: white;
+  border-top: 1px solid #f0d6d2;
+  align-items: center;
+  gap: 10px;
 
   input {
     flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
+    padding: 12px 16px;
+    border: 1px solid #f0d6d2;
+    background-color: #fff1ef;
+    border-radius: 24px;
     outline: none;
-    margin-right: 10px;
+    color: #4c3a3a;
+    font-size: 14px;
+    transition: border-color 0.2s;
     
-    &:focus { border-color: #7702FF; }
+    &::placeholder { color: #9a817e; }
+    &:focus { border-color: #bd3732; background-color: white; }
   }
 
   button {
-    background-color: #7702FF;
+    background-color: #007c7a; // Ayni Turquesa (Contraste)
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    
+    &:hover:not(:disabled) {
+      background-color: #006b6a;
+      transform: scale(1.05);
+    }
     
     &:disabled {
-      background-color: #ccc;
+      background-color: #d1d5db;
       cursor: not-allowed;
     }
   }
+}
+
+/* Animación de los 3 puntitos "Escribiendo..." */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 15px 18px !important;
+  
+  span {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #9a817e;
+    animation: bounce 1.4s infinite ease-in-out both;
+    
+    &:nth-child(1) { animation-delay: -0.32s; }
+    &:nth-child(2) { animation-delay: -0.16s; }
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
 }

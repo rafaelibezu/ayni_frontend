@@ -1,133 +1,111 @@
-<main class="cart-container">
+<div class="cart-container">
   <header class="cart-header">
     <h1>Tu bolsa de compras</h1>
-    <p>
-      Revisa tus productos seleccionados y continua al checkout para confirmar tu direccion.
-    </p>
+    <p>Revisa tus artículos seleccionados y procede al pago para un toque de bienestar modernista.</p>
   </header>
 
-  @if (feedback()) {
-    <div class="feedback" [class.feedback-error]="feedback()?.type === 'error'" role="status">
-      {{ feedback()?.text }}
-    </div>
-  }
-
-  @if (isLoading()) {
-    <div class="cart-state">Cargando tu carrito...</div>
-  } @else if (!cart()?.items?.length) {
-    <section class="cart-state empty-cart">
-      <div aria-hidden="true">🛒</div>
-      <h2>Tu carrito está vacío</h2>
-      <p>Explora la tienda y agrega tus productos favoritos.</p>
-      <a routerLink="/home">Seguir comprando</a>
-    </section>
-  } @else {
-    <div class="cart-toolbar">
-      <span
-        >{{ cart()?.totalItems }} {{ cart()?.totalItems === 1 ? 'artículo' : 'artículos' }}</span
-      >
-      <button type="button" (click)="clearCart()" [disabled]="isClearing()">
-        {{ isClearing() ? 'Vaciando...' : 'Vaciar carrito' }}
-      </button>
-    </div>
-
-    <div class="cart-content">
-      <section class="cart-items-section" aria-label="Productos del carrito">
-        @for (item of cart()!.items; track item.itemId) {
-          <article class="cart-item" [class.item-updating]="isUpdating(item.itemId)">
-            @if (item.imagenPrincipalUrl) {
-              <img [src]="item.imagenPrincipalUrl" [alt]="item.nombre" class="item-image" />
-            } @else {
-              <div class="item-image item-placeholder" aria-hidden="true">
-                {{ item.nombre.charAt(0) }}
-              </div>
-            }
-
+  <div class="cart-content">
+    
+    <!-- Columna Izquierda: Lista de Productos -->
+    <div class="cart-items-section">
+      
+      @if (cart()?.items?.length) {
+        @for (item of cart()?.items; track item.productId) {
+          <div class="cart-item">
+            <!-- Cargamos la imagen real o un placeholder si falla -->
+            <img [src]="item.imagenPrincipalUrl" [alt]="item.nombre" class="item-image" onerror="this.src='/assets/img/home/hero.jpg'">
+            
             <div class="item-details">
               <div class="item-title-row">
-                <div>
-                  <h3>{{ item.nombre }}</h3>
-                  <p class="item-meta">SKU: {{ item.slug }}</p>
-                </div>
+                <h3>{{ item.nombre }}</h3>
                 <span class="item-price">{{ formatPrice(item.subtotal) }}</span>
               </div>
-              <p class="unit-price">
-                {{ formatPrice(item.precioUnitario) }} por unidad · Stock: {{ item.stock }}
-              </p>
+              <p class="item-meta">SKU/Slug: {{ item.slug }} • P.U: {{ formatPrice(item.precioUnitario) }}</p>
+              
               <div class="item-actions">
-                <div class="quantity-control" aria-label="Cantidad">
-                  <button
-                    type="button"
-                    class="qty-btn"
-                    (click)="changeQuantity(item, -1)"
-                    [disabled]="item.cantidad <= 1 || isUpdating(item.itemId)"
-                    [attr.aria-label]="'Reducir cantidad de ' + item.nombre"
-                  >
-                    −
-                  </button>
+                <div class="quantity-control">
+                  <button class="qty-btn" (click)="updateQuantity(item, -1)">-</button>
                   <span class="qty-number">{{ item.cantidad }}</span>
-                  <button
-                    type="button"
-                    class="qty-btn"
-                    (click)="changeQuantity(item, 1)"
-                    [disabled]="item.cantidad >= item.stock || isUpdating(item.itemId)"
-                    [attr.aria-label]="'Aumentar cantidad de ' + item.nombre"
-                  >
-                    +
-                  </button>
+                  <button class="qty-btn" (click)="updateQuantity(item, 1)">+</button>
                 </div>
-                <button
-                  type="button"
-                  class="delete-btn"
-                  (click)="removeItem(item)"
-                  [disabled]="isUpdating(item.itemId)"
-                >
-                  <span aria-hidden="true">×</span
-                  >{{ isUpdating(item.itemId) ? 'Actualizando...' : 'Eliminar' }}
+                <button class="delete-btn" (click)="removeItem(item)">
+                  🗑️ Eliminar
                 </button>
               </div>
             </div>
-          </article>
+          </div>
         }
-
-        <aside class="promo-banner">
-          <div class="promo-icon" aria-hidden="true">🌿</div>
-          <div class="promo-text">
-            <h4>Añade un toque especial</h4>
-            <p>Continúa explorando la colección Ayni y encuentra nuevos favoritos.</p>
-          </div>
-          <a routerLink="/home" class="promo-link">Seguir comprando</a>
-        </aside>
-      </section>
-
-      <aside class="cart-summary-section">
-        <div class="summary-card">
-          <h2>Resumen del pedido</h2>
-          <div class="summary-row">
-            <span
-              >Subtotal ({{ cart()?.totalItems }}
-              {{ cart()?.totalItems === 1 ? 'artículo' : 'artículos' }})</span
-            ><strong>{{ formatPrice(cart()?.subtotal || 0) }}</strong>
-          </div>
-          <div class="summary-row">
-            <span>Envío</span><span class="text-green">Se calcula en checkout</span>
-          </div>
-          <hr class="divider" />
-          <div class="summary-total">
-            <span class="total-label">Total parcial</span>
-            <div class="total-price-box">
-              <strong class="total-price">{{ formatPrice(cart()?.subtotal || 0) }}</strong
-              ><span class="iva-note">Antes de envío</span>
-            </div>
-          </div>
-          <a routerLink="/user/checkout" class="checkout-btn">
-            Proceder al pago →
+      } @else {
+        <!-- Estado Vacío -->
+        <div class="rounded-2xl bg-white p-10 text-center shadow-sm">
+          <div class="text-4xl mb-4">🛍️</div>
+          <h3 class="text-xl font-bold text-[#211313]">Tu carrito está vacío</h3>
+          <p class="mt-2 text-[#6a4d49]">¡Parece que aún no has agregado nada!</p>
+          <a routerLink="/catalog" class="mt-6 inline-block rounded-xl bg-[#bd3732] px-8 py-3 font-bold text-white transition hover:bg-[#a72f2b]">
+            Ir a la tienda
           </a>
-          <p class="secure-checkout-note">
-            Continua al checkout para seleccionar direccion y confirmar tu pedido.
-          </p>
         </div>
-      </aside>
+      }
+
+      <!-- Banner Promocional -->
+      <div class="promo-banner mt-6">
+        <div class="promo-icon">🌿</div>
+        <div class="promo-text">
+          <h4>Añade un toque de seda</h4>
+          <p>Los pedidos superiores a S/ 150 reciben una máscara de sueño de seda pura de regalo.</p>
+        </div>
+        <a routerLink="/catalog" [queryParams]="{ category: 'accesorios' }" class="promo-link">Comprar<br>Accesorios</a>
+      </div>
     </div>
-  }
-</main>
+
+    <!-- Columna Derecha: Resumen del Pedido -->
+    <div class="cart-summary-section">
+      <div class="summary-card">
+        <h2>Resumen del pedido</h2>
+        
+        <div class="summary-row">
+          <span>Subtotal ({{ cart()?.totalItems || 0 }} artículos)</span>
+          <span>{{ formatPrice(cart()?.subtotal) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Envío ⓘ</span>
+          <span class="text-[#007c7a] font-bold">GRATIS</span>
+        </div>
+        
+        <hr class="divider">
+        
+        <div class="summary-total">
+          <span class="total-label">Total</span>
+          <div class="total-price-box">
+             <span class="total-price">{{ formatPrice(cart()?.subtotal) }}</span>
+             <span class="iva-note">IGV INCLUIDO</span>
+          </div>
+        </div>
+        
+        <!-- Botón deshabilitado si no hay items -->
+        <button class="checkout-btn" [disabled]="!cart()?.items?.length" [class.opacity-50]="!cart()?.items?.length">
+          Proceder al pago ➔
+        </button>
+        
+        <p class="secure-checkout-note mt-4 text-xs text-[#6a4d49]">
+          Pago seguro cifrado proporcionado por Ayni. Aceptamos Yape, Plin y las principales tarjetas.
+        </p>
+        
+        <div class="payment-icons mt-3">
+           💳 🏦 🌐
+        </div>
+      </div>
+
+      <!-- Tarjeta de Ayuda -->
+      <div class="help-card mt-6">
+        <div class="help-icon">🎧</div>
+        <div class="help-content">
+          <h4>¿Necesitas ayuda?</h4>
+          <p>Nuestros curadores de estilo están disponibles 24/7 para ayudarte con tu selección.</p>
+          <a routerLink="/contact">Chatea con nosotros</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

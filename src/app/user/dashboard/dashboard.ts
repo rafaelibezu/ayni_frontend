@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { Favorite } from '../../core/models/favorite.model';
 import { Order } from '../../core/models/order.model';
@@ -8,10 +8,10 @@ import { Product } from '../../core/models/product.model';
 import { UserProfile } from '../../core/models/user.model';
 
 import { FavoriteService } from '../../core/services/favorite.service';
-import { AuthService } from '../../core/services/auth.service';
 import { OrderService } from '../../core/services/order.service';
 import { ProductService } from '../../core/services/product.service';
 import { UserService } from '../../core/services/user.service';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -20,19 +20,17 @@ import { UserService } from '../../core/services/user.service';
   styleUrl: './dashboard.scss',
 })
 export class UserDashboard {
-  private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
   private readonly orderService = inject(OrderService);
   private readonly favoriteService = inject(FavoriteService);
   private readonly productService = inject(ProductService);
-  private readonly route = inject(ActivatedRoute);
+  private readonly cartService = inject(CartService);
 
-  user = signal<UserProfile | null>(this.authService.currentUser() as UserProfile | null);
+  user = signal<UserProfile | null>(null);
   recentOrders = signal<Order[]>([]);
   favorites = signal<Favorite[]>([]);
   recommendedProducts = signal<Product[]>([]);
   isLoading = signal(true);
-  paymentSent = signal(this.route.snapshot.queryParamMap.get('payment') === 'sent');
 
   constructor() {
     this.loadDashboard();
@@ -43,7 +41,7 @@ export class UserDashboard {
 
     this.userService.getMe().subscribe({
       next: (user) => this.user.set(user),
-      error: () => undefined,
+      error: () => this.user.set(null),
     });
 
     this.orderService.findMyOrders().subscribe({
@@ -66,6 +64,12 @@ export class UserDashboard {
         this.isLoading.set(false);
       },
     });
+  }
+
+  addToCart(product: Product, event: Event): void {
+    event.preventDefault(); // Evita que navegue a la página del producto
+    event.stopPropagation(); // Detiene la propagación del clic al enlace padre
+    this.cartService.addItem({ productId: product.id!, cantidad: 1 }, product);
   }
 
   get profilePercent(): number {
