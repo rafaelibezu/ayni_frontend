@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { Auth } from './public/auth/auth';
 import { Home } from './public/home/home';
+import { ProductDetail } from './public/product-detail/product-detail';
 import { Dashboard } from './admin/dashboard/dashboard';
 import { UserDashboard } from './user/dashboard/dashboard';
 import { Cart } from './user/cart/cart';
@@ -47,7 +48,10 @@ export const routes: Routes = [
     path: 'home',
     component: Home,
   },
-
+  {
+    path: 'products/:slug',
+    component: ProductDetail,
+  },
   {
     path: 'user/dashboard',
     component: UserDashboard,
@@ -83,7 +87,6 @@ export const routes: Routes = [
     component: Favorites,
     canActivate: [authGuard],
   },
-
   {
     path: 'admin',
     component: AdminLayout,
@@ -120,7 +123,6 @@ export const routes: Routes = [
       },
     ],
   },
-
   {
     path: '**',
     redirectTo: 'home',

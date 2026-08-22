@@ -17,4 +17,10 @@ export class ProductService {
       .get<ApiResponse<Product[]>>(`${environment.apiUrl}/products/featured`)
       .pipe(map((response) => response.data));
   }
+
+  findBySlug(slug: string): Observable<Product> {
+    return this.http
+      .get<ApiResponse<Product>>(`${environment.apiUrl}/products/${slug}`)
+      .pipe(map((response) => response.data));
+  }
 }
