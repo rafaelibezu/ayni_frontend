@@ -68,19 +68,32 @@ export class Favorites {
 
   addToCart(favorite: Favorite): void {
     if (!this.hasStock(favorite)) return;
+    
     this.addingProductId.set(favorite.productId);
     this.feedback.set(null);
-    this.cartService
-      .addItem({ productId: favorite.productId, cantidad: 1 })
-      .pipe(finalize(() => this.addingProductId.set(null)))
-      .subscribe({
-        next: () =>
-          this.feedback.set({
-            type: 'success',
-            text: `${favorite.nombre} se agregó al carrito.`,
-          }),
-        error: (error) => this.showError(error, 'No se pudo agregar el producto al carrito.'),
+    
+    try {
+      // Creamos un objeto simulando los detalles para el nuevo CartService
+      const productDetails = {
+        nombre: favorite.nombre,
+        slug: favorite.slug,
+        imagenPrincipalUrl: favorite.imagenPrincipalUrl,
+        precio: favorite.precio,
+        stock: favorite.stock
+      };
+
+      // Llamamos al servicio (ahora es void, él mismo maneja el estado)
+      this.cartService.addItem({ productId: favorite.productId, cantidad: 1 }, productDetails);
+      
+      this.feedback.set({
+        type: 'success',
+        text: `${favorite.nombre} se agregó al carrito.`,
       });
+    } catch (error) {
+      this.showError(error, 'No se pudo agregar el producto al carrito.');
+    } finally {
+      this.addingProductId.set(null);
+    }
   }
 
   hasStock(favorite: Favorite): boolean {

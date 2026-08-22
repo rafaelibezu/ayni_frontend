@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { Auth } from './public/auth/auth';
 import { Home } from './public/home/home';
+import { Catalog } from './public/catalog/catalog';
 import { ProductDetail } from './public/product-detail/product-detail';
 import { Dashboard } from './admin/dashboard/dashboard';
 import { UserDashboard } from './user/dashboard/dashboard';
@@ -47,6 +48,10 @@ export const routes: Routes = [
   {
     path: 'home',
     component: Home,
+  },
+  {
+    path: 'catalog',
+    component: Catalog,
   },
   {
     path: 'products/:slug',

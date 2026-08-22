@@ -6,7 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { Address, CreateAddressRequest } from '../../core/models/address.model';
-import { Cart } from '../../core/models/cart.model';
+import { CartResponse } from '../../core/models/cart.model';
 import { AddressService } from '../../core/services/address.service';
 import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
@@ -25,7 +25,9 @@ export class Checkout {
 
   readonly shippingCost = 5;
 
-  cart = signal<Cart | null>(null);
+  // Enlazamos directamente al Signal reactivo de nuestro nuevo servicio
+  cart = this.cartService.cart;
+  
   addresses = signal<Address[]>([]);
   selectedAddressId = signal<number | null>(null);
   isLoading = signal(true);
@@ -53,23 +55,14 @@ export class Checkout {
 
   loadCheckout(): void {
     this.isLoading.set(true);
-    let pending = 2;
-    const finish = () => {
-      pending -= 1;
-      if (pending === 0) this.isLoading.set(false);
-    };
+    
+    // Le pedimos al servicio que cargue/actualice el carrito en segundo plano
+    this.cartService.loadCart();
 
-    this.cartService
-      .findMyCart()
-      .pipe(finalize(finish))
-      .subscribe({
-      next: (cart) => this.cart.set(cart),
-      error: (error) => this.showError(error, 'No se pudo cargar tu carrito.'),
-    });
-
+    // Solo esperamos a que carguen las direcciones
     this.addressService
       .findAll()
-      .pipe(finalize(finish))
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
       next: (addresses) => {
         this.addresses.set(addresses);
@@ -127,7 +120,11 @@ export class Checkout {
       .checkout({ addressId, observaciones: this.observations || 'Pedido realizado desde la web' })
       .pipe(finalize(() => this.isCheckingOut.set(false)))
       .subscribe({
-        next: (order) => this.router.navigate(['/user/checkout/yape', order.id]),
+        next: (order) => {
+          // Limpiamos el carrito al procesar el pago correctamente
+          this.cartService.clearCart(); 
+          this.router.navigate(['/user/checkout/yape', order.id]);
+        },
         error: (error) => this.showError(error, 'No se pudo confirmar el pedido.'),
       });
   }

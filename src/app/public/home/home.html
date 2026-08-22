@@ -121,12 +121,12 @@
       @if (featuredProducts().length > 0) {
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           @for (product of featuredProducts(); track product.id) {
-            <article class="product-card">
+            <article class="product-card group cursor-pointer" [routerLink]="['/products', product.slug]">
               <div class="relative h-64 overflow-hidden rounded-t-2xl bg-[#f5efed]">
                 <img
                   [src]="product.imagenPrincipalUrl"
                   [alt]="product.nombre"
-                  class="h-full w-full object-cover transition duration-500 hover:scale-105"
+                  class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
 
                 @if (product.badge) {
@@ -167,7 +167,7 @@
 
                   <button
                     type="button"
-                    (click)="addToCart(product)"
+                    (click)="addToCart(product, $event)"
                     class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#dff7f5] text-[#007c7a] transition hover:bg-[#c9f1ef]"
                     title="Agregar al carrito"
                   >

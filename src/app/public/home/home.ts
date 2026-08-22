@@ -61,7 +61,9 @@ export class Home {
     });
   }
 
-  addToCart(product: Product): void {
+  addToCart(product: Product, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation(); // Evita que se dispare el routerLink de la tarjeta
     this.cartService.addItem({ productId: product.id!, cantidad: 1 }, product);
   }
 

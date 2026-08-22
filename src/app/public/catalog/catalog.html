@@ -1,1 +1,203 @@
-<p>catalog works!</p>
+<main class="bg-[#fff7f6] text-[#4c3a3a] min-h-screen pb-20 pt-8">
+  <div class="mx-auto max-w-7xl px-5 lg:px-10">
+    
+    <!-- Breadcrumbs -->
+    <nav class="text-sm text-[#9a817e] mb-8">
+      <a routerLink="/home" class="hover:text-[#bd3732]">Inicio</a> &rsaquo; 
+      <span class="font-bold text-[#4c3a3a]">Catálogo</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-10">
+      
+      <!-- BARRA LATERAL (FILTROS) -->
+      <aside class="w-full lg:w-64 shrink-0">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-extrabold text-[#211313] uppercase tracking-wider">Filtros</h2>
+          <button *ngIf="selectedCategory()" (click)="onCategoryChange(null)" class="text-xs text-[#bd3732] font-bold hover:underline">Limpiar todo</button>
+        </div>
+
+        <!-- Categorías -->
+        <div class="mb-8 border-b border-[#f0d6d2] pb-6">
+          <h3 class="font-bold text-[#211313] mb-4 text-sm">CATEGORÍAS</h3>
+          <ul class="space-y-3">
+            <li>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="radio" name="category" [checked]="!selectedCategory()" (change)="onCategoryChange(null)" class="w-4 h-4 text-[#bd3732] focus:ring-[#bd3732]">
+                <span class="text-[#6a4d49] text-sm group-hover:text-[#bd3732] transition">Todos los productos</span>
+              </label>
+            </li>
+            @for (cat of categories(); track cat.id) {
+              <li>
+                <label class="flex items-center gap-3 cursor-pointer group">
+                  <input type="radio" name="category" [checked]="selectedCategory() === cat.slug" (change)="onCategoryChange(cat.slug)" class="w-4 h-4 text-[#007c7a] focus:ring-[#007c7a] bg-white border-gray-300">
+                  <span class="text-[#6a4d49] text-sm group-hover:text-[#bd3732] transition" [class.font-bold]="selectedCategory() === cat.slug">{{ cat.nombre }}</span>
+                </label>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Rango de Precio (Diseño Mockup visual) -->
+        <div class="mb-8 border-b border-[#f0d6d2] pb-6">
+          <h3 class="font-bold text-[#211313] mb-4 text-sm">RANGO DE PRECIO</h3>
+          <div class="px-2">
+            <div class="w-full h-1 bg-[#f0d6d2] rounded-full relative mb-4">
+              <div class="absolute h-1 bg-[#bd3732] rounded-full" style="left: 20%; right: 30%;"></div>
+              <div class="absolute w-4 h-4 bg-[#bd3732] rounded-full -top-1.5 shadow" style="left: 20%;"></div>
+              <div class="absolute w-4 h-4 bg-[#bd3732] rounded-full -top-1.5 shadow" style="right: 30%;"></div>
+            </div>
+            <div class="flex justify-between text-xs text-[#9a817e] font-bold">
+              <span>S/ 20</span>
+              <span>S/ 500</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Colecciones Especiales (Mockup) -->
+        <div class="mb-8 border-b border-[#f0d6d2] pb-6">
+          <h3 class="font-bold text-[#211313] mb-4 text-sm">COLECCIONES</h3>
+          <ul class="space-y-3">
+            <li>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="checkbox" class="w-4 h-4 rounded text-[#007c7a] focus:ring-[#007c7a] border-gray-300">
+                <span class="text-[#6a4d49] text-sm group-hover:text-[#bd3732] transition">Botánicos (24)</span>
+              </label>
+            </li>
+            <li>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="checkbox" class="w-4 h-4 rounded text-[#007c7a] focus:ring-[#007c7a] border-gray-300">
+                <span class="text-[#6a4d49] text-sm group-hover:text-[#bd3732] transition">Regalos (12)</span>
+              </label>
+            </li>
+            <li>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="checkbox" class="w-4 h-4 rounded text-[#007c7a] focus:ring-[#007c7a] border-gray-300">
+                <span class="text-[#6a4d49] text-sm group-hover:text-[#bd3732] transition">Básicos (18)</span>
+              </label>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- ÁREA PRINCIPAL (CUADRÍCULA DE PRODUCTOS) -->
+      <div class="flex-1">
+        
+        <!-- Cabecera de Categoría y Ordenar -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-extrabold text-[#211313] capitalize">
+              {{ selectedCategory() ? 'Colección ' + selectedCategory() : 'Todos los productos' }}
+            </h1>
+            <p class="text-sm text-[#9a817e] mt-2">
+              Mostrando {{ products().length > 0 ? (currentPage() * pageSize) + 1 : 0 }} - 
+              {{ (currentPage() * pageSize) + products().length }} de {{ totalElements() }} productos
+            </p>
+          </div>
+          
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-[#9a817e]">Ordenar por:</span>
+              <select class="bg-transparent border-none text-[#4c3a3a] font-bold text-sm outline-none cursor-pointer focus:ring-0 p-0">
+                <option>Destacados</option>
+                <option>Precio: Menor a Mayor</option>
+                <option>Precio: Mayor a Menor</option>
+                <option>Más recientes</option>
+              </select>
+            </div>
+            <!-- Iconos de Grid/List -->
+            <div class="hidden sm:flex gap-2 text-[#9a817e]">
+              <button class="hover:text-[#bd3732] transition"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"></path></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cargando -->
+        @if (isLoading()) {
+          <div class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#bd3732]"></div>
+          </div>
+        } @else if (products().length > 0) {
+          
+          <!-- Cuadrícula -->
+          <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+            @for (prod of products(); track prod.id) {
+              <article class="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#f0d6d2] group cursor-pointer flex flex-col h-full" [routerLink]="['/products', prod.slug]">
+                
+                <!-- Imagen -->
+                <div class="relative h-64 overflow-hidden bg-[#f5efed]">
+                  <img [src]="prod.imagenPrincipalUrl" [alt]="prod.nombre" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='/assets/img/home/hero.jpg'">
+                  
+                  @if (prod.badge) {
+                    <span class="absolute left-3 top-3 rounded-full bg-[#007c7a] px-3 py-1 text-[10px] font-bold text-white uppercase">
+                      {{ prod.badge }}
+                    </span>
+                  }
+                  
+                  <button class="absolute top-3 right-3 h-8 w-8 rounded-full bg-white text-[#bd3732] shadow flex items-center justify-center hover:scale-110 opacity-80 hover:opacity-100">♡</button>
+                </div>
+                
+                <!-- Cuerpo -->
+                <div class="p-5 flex flex-col flex-1">
+                  <p class="text-[10px] font-bold text-[#007c7a] uppercase tracking-wider mb-1">{{ prod.categoriaNombre }}</p>
+                  <h3 class="font-bold text-[#211313] mb-4 text-base line-clamp-2 flex-1">{{ prod.nombre }}</h3>
+                  
+                  <div class="flex justify-between items-center border-t border-[#f0d6d2] pt-4 mt-auto">
+                    <div>
+                      <span class="font-extrabold text-[#26547c] text-lg">{{ formatPrice(prod.precio) }}</span>
+                      @if (prod.precioComparacion) {
+                        <span class="text-xs text-[#9a817e] line-through ml-2">{{ formatPrice(prod.precioComparacion) }}</span>
+                      }
+                    </div>
+                    
+                    <button type="button" (click)="addToCart(prod, $event)" class="text-[#bd3732] text-2xl hover:scale-125 transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#fff1ef]" title="Añadir al carrito">
+                      &oplus;
+                    </button>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+
+          <!-- Paginación Inferior -->
+          @if (totalPages() > 1) {
+            <div class="mt-14 flex justify-center items-center gap-2">
+              <button 
+                [disabled]="currentPage() === 0" 
+                (click)="changePage(currentPage() - 1)"
+                class="w-10 h-10 rounded-full flex items-center justify-center border border-[#f0d6d2] text-[#6a4d49] hover:border-[#bd3732] hover:text-[#bd3732] disabled:opacity-40 disabled:hover:border-[#f0d6d2] transition">
+                &lsaquo;
+              </button>
+              
+              @for (page of pagesArray; track page) {
+                <button 
+                  (click)="changePage(page)"
+                  [class.bg-[#bd3732]]="currentPage() === page"
+                  [class.text-white]="currentPage() === page"
+                  [class.border-[#bd3732]]="currentPage() === page"
+                  class="w-10 h-10 rounded-full flex items-center justify-center border border-[#f0d6d2] text-[#6a4d49] font-bold hover:border-[#bd3732] hover:text-[#bd3732] transition">
+                  {{ page + 1 }}
+                </button>
+              }
+
+              <button 
+                [disabled]="currentPage() === totalPages() - 1" 
+                (click)="changePage(currentPage() + 1)"
+                class="w-10 h-10 rounded-full flex items-center justify-center border border-[#f0d6d2] text-[#6a4d49] hover:border-[#bd3732] hover:text-[#bd3732] disabled:opacity-40 disabled:hover:border-[#f0d6d2] transition">
+                &rsaquo;
+              </button>
+            </div>
+          }
+
+        } @else {
+          <!-- Vacío -->
+          <div class="flex flex-col items-center justify-center py-20 text-center bg-white rounded-3xl border border-[#f0d6d2]">
+            <div class="text-4xl mb-4 text-[#f0d6d2]">🔍</div>
+            <h3 class="text-xl font-bold text-[#211313] mb-2">No se encontraron productos</h3>
+            <p class="text-[#6a4d49] mb-6">Intenta seleccionar otra categoría o limpiar los filtros.</p>
+            <button (click)="onCategoryChange(null)" class="px-6 py-2 bg-[#bd3732] text-white font-bold rounded-xl hover:bg-[#a72f2b] transition">Ver todos los productos</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</main>
