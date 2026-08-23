@@ -74,19 +74,34 @@
           <a
             routerLink="/catalog"
             [queryParams]="{ category: category.slug }"
-            class="category-card"
+            class="category-card relative overflow-hidden rounded-2xl block group h-80"
             [class.lg:col-span-2]="index === 0"
             [class.lg:row-span-2]="index === 0"
           >
-            <img
-              [src]="category.imagenUrl"
-              [alt]="category.nombre"
-              class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            />
+            <!-- RUTAS ESTÁTICAS BLINDADAS POR SLUG -->
+            @if (category.slug === 'belleza') {
+              <img
+                src="/assets/categorias-img/belleza/belleza-logo.png"
+                [alt]="category.nombre"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+            } @else if (category.slug === 'hogar') {
+              <img
+                src="/assets/categorias-img/hogar/hogar-logo.png"
+                [alt]="category.nombre"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+            } @else {
+              <img
+                src="/assets/categorias-img/tecnologia/tecnologia-logo.png"
+                [alt]="category.nombre"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+            }
 
             <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent"></div>
 
-            <div class="absolute bottom-6 left-6 right-6 text-white">
+            <div class="absolute bottom-6 left-6 right-6 text-white z-10">
               <h3 class="text-2xl font-bold">
                 {{ category.nombre }}
               </h3>
@@ -127,6 +142,7 @@
                   [src]="product.imagenPrincipalUrl"
                   [alt]="product.nombre"
                   class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  onerror="this.src='/assets/img/home/hero.jpg'"
                 />
 
                 @if (product.badge) {

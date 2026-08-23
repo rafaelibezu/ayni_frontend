@@ -34,16 +34,16 @@ export class Catalog implements OnInit {
 
   // Filtros
   selectedCategory = signal<string | null>(null);
+  maxPrice = signal<number>(1000); // Rango de precio inicial
   isLoading = signal(true);
 
   ngOnInit(): void {
     this.loadCategories();
 
-    // Escuchamos la URL (ej: /catalog?category=hogar)
     this.route.queryParams.subscribe(params => {
       const category = params['category'] || null;
       this.selectedCategory.set(category);
-      this.currentPage.set(0); // Volvemos a la página 1 al cambiar de filtro
+      this.currentPage.set(0); 
       this.loadProducts();
     });
   }
@@ -75,8 +75,17 @@ export class Catalog implements OnInit {
     });
   }
 
+  // Filtro visual en el frontend para el precio
+  get filteredProducts(): Product[] {
+    return this.products().filter(p => p.precio <= this.maxPrice());
+  }
+
+  updatePrice(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.maxPrice.set(Number(input.value));
+  }
+
   onCategoryChange(categorySlug: string | null): void {
-    // Cambiamos la URL, el ngOnInit detectará el cambio y cargará los productos
     this.router.navigate(['/catalog'], { 
       queryParams: categorySlug ? { category: categorySlug } : {} 
     });

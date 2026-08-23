@@ -42,7 +42,28 @@ export class Home {
 
     this.categoryService.findAll().subscribe({
       next: (categories) => {
-        this.categories.set(categories.filter((category) => category.activo));
+        const activeCategories = categories
+          .filter((category) => category.activo)
+          .map((category) => {
+            // Asignación manual infalible basada en el ID o el Nombre de la BD
+            const nombreLower = category.nombre.toLowerCase();
+            let imgPath = '/assets/img/home/hero.jpg'; // Imagen por defecto de respaldo
+
+            if (nombreLower.includes('belleza')) {
+              imgPath = '/assets/categorias-img/belleza/belleza-logo.png';
+            } else if (nombreLower.includes('hogar')) {
+              imgPath = '/assets/categorias-img/hogar/hogar-logo.png';
+            } else if (nombreLower.includes('tecnología') || nombreLower.includes('tecnologia')) {
+              imgPath = '/assets/categorias-img/tecnologia/tecnologia-logo.png';
+            }
+
+            return {
+              ...category,
+              imagenUrl: imgPath,
+            };
+          });
+
+        this.categories.set(activeCategories);
       },
       error: () => {
         this.categories.set([]);
@@ -63,7 +84,7 @@ export class Home {
 
   addToCart(product: Product, event: Event): void {
     event.preventDefault();
-    event.stopPropagation(); // Evita que se dispare el routerLink de la tarjeta
+    event.stopPropagation();
     this.cartService.addItem({ productId: product.id!, cantidad: 1 }, product);
   }
 

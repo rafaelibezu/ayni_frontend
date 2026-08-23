@@ -19,57 +19,28 @@
       <!-- Producto Principal Grid -->
       <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
         
-        <!-- Izquierda: Imágenes -->
         <div class="flex gap-4 h-[600px]">
-          <!-- Miniaturas -->
           <div class="flex flex-col gap-4 w-20 hidden md:flex">
             <div class="w-20 h-20 rounded-xl border-2 border-[#bd3732] overflow-hidden cursor-pointer">
               <img [src]="product()?.imagenPrincipalUrl" [alt]="product()?.nombre" class="w-full h-full object-cover">
             </div>
-            <div class="w-20 h-20 rounded-xl border border-[#f0d6d2] overflow-hidden cursor-pointer opacity-60 hover:opacity-100 transition">
-              <img src="/assets/img/home/hero.jpg" alt="Thumbnail 2" class="w-full h-full object-cover">
-            </div>
-            <div class="w-20 h-20 rounded-xl border border-[#f0d6d2] overflow-hidden cursor-pointer opacity-60 hover:opacity-100 transition">
-              <img src="/assets/img/home/promise.jpg" alt="Thumbnail 3" class="w-full h-full object-cover">
-            </div>
           </div>
-          
-          <!-- Imagen Principal -->
           <div class="flex-1 relative rounded-3xl bg-[#f5efed] overflow-hidden shadow-sm">
             <img [src]="product()?.imagenPrincipalUrl" [alt]="product()?.nombre" class="w-full h-full object-cover" onerror="this.src='/assets/img/home/hero.jpg'">
-            <button
-              type="button"
-              (click)="toggleFavorite()"
-              [disabled]="isFavoritePending()"
-              [attr.aria-label]="isFavorite() ? 'Eliminar de favoritos' : 'Agregar a favoritos'"
-              [title]="isFavorite() ? 'Eliminar de favoritos' : 'Agregar a favoritos'"
-              class="absolute top-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#bd3732] shadow hover:scale-110 transition disabled:cursor-not-allowed disabled:opacity-60">
-              <svg width="24" height="24" [attr.fill]="isFavorite() ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
-            </button>
           </div>
         </div>
 
-        <!-- Derecha: Detalles del Producto -->
         <div class="flex flex-col justify-center">
-          @if (product()?.badge) {
-            <span class="inline-flex w-fit rounded-full bg-[#76e1df] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#006b6a] mb-4">
-              {{ product()?.badge }}
-            </span>
-          } @else {
-            <span class="inline-flex w-fit rounded-full bg-[#76e1df] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#006b6a] mb-4">
-              ELECCIÓN DEL EDITOR
-            </span>
-          }
+          <span class="inline-flex w-fit rounded-full bg-[#76e1df] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#006b6a] mb-4">
+            {{ product()?.badge || 'NUEVO' }}
+          </span>
 
           <h1 class="text-4xl lg:text-5xl font-extrabold text-[#211313] leading-tight mb-4">
             {{ product()?.nombre }}
           </h1>
 
-          <!-- Reviews (Mockeado para diseño) -->
           <div class="flex items-center gap-2 mb-6">
-            <div class="flex text-[#bd3732]">
-              ★ ★ ★ ★ ★
-            </div>
+            <div class="flex text-[#bd3732]">★ ★ ★ ★ ★</div>
             <span class="text-sm text-[#9a817e]">4.8 (124 Reseñas)</span>
           </div>
 
@@ -79,32 +50,42 @@
 
           <p class="text-base leading-relaxed text-[#6a4d49] mb-8">
             {{ product()?.descripcion }}
-            Un suero bioactivo revolucionario diseñado para restaurar la barrera natural de su piel mientras proporciona una hidratación profunda e intensa. Infundido con péptidos raros y extractos orgánicos.
           </p>
 
-          <!-- Selectores (Volumen y Aroma) -->
-          <div class="mb-6">
-            <p class="text-xs font-bold uppercase tracking-widest text-[#4c3a3a] mb-3">Volumen</p>
-            <div class="flex gap-3">
-              <button class="px-5 py-2 border-2 border-[#bd3732] rounded-lg text-[#bd3732] font-semibold bg-[#fff1ef]">30ml</button>
-              <button class="px-5 py-2 border border-[#f0d6d2] rounded-lg text-[#9a817e] hover:border-[#bd3732] transition">50ml</button>
-              <button class="px-5 py-2 border border-[#f0d6d2] rounded-lg text-[#9a817e] hover:border-[#bd3732] transition">100ml</button>
+          <!-- CONDICIONAL: SI ES BELLEZA O CUIDADO PERSONAL -->
+          @if (isBeautyProduct) {
+            <div class="mb-6">
+              <p class="text-xs font-bold uppercase tracking-widest text-[#4c3a3a] mb-3">Volumen</p>
+              <div class="flex gap-3">
+                <button class="px-5 py-2 border-2 border-[#bd3732] rounded-lg text-[#bd3732] font-semibold bg-[#fff1ef]">30ml</button>
+                <button class="px-5 py-2 border border-[#f0d6d2] rounded-lg text-[#9a817e] hover:border-[#bd3732] transition">50ml</button>
+              </div>
             </div>
-          </div>
-
-          <div class="mb-10">
-            <p class="text-xs font-bold uppercase tracking-widest text-[#4c3a3a] mb-3">Perfil de Aroma</p>
-            <div class="flex gap-3">
-              <button class="px-4 py-2 border-2 border-[#bd3732] rounded-lg text-[#bd3732] font-semibold bg-[#fff1ef] flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#bd3732]"></span> Rosa de Autor
-              </button>
-              <button class="px-4 py-2 border border-[#f0d6d2] rounded-lg text-[#9a817e] hover:border-[#bd3732] transition flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#007c7a]"></span> Bruma Oceánica
-              </button>
+            <div class="mb-10">
+              <p class="text-xs font-bold uppercase tracking-widest text-[#4c3a3a] mb-3">Perfil de Aroma</p>
+              <div class="flex gap-3">
+                <button class="px-4 py-2 border-2 border-[#bd3732] rounded-lg text-[#bd3732] font-semibold bg-[#fff1ef] flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-[#bd3732]"></span> Rosa de Autor
+                </button>
+              </div>
             </div>
-          </div>
+          }
 
-          <!-- Controles de Carrito -->
+          <!-- CONDICIONAL: SI ES TECNOLOGÍA -->
+          @if (isTechProduct) {
+            <div class="mb-10">
+              <p class="text-xs font-bold uppercase tracking-widest text-[#4c3a3a] mb-3">Color</p>
+              <div class="flex gap-3">
+                <button class="px-4 py-2 border-2 border-[#bd3732] rounded-lg text-[#bd3732] font-semibold bg-[#fff1ef] flex items-center gap-2">
+                  <span class="w-4 h-4 rounded-full bg-[#211313]"></span> Negro Mate
+                </button>
+                <button class="px-4 py-2 border border-[#f0d6d2] rounded-lg text-[#9a817e] hover:border-[#bd3732] transition flex items-center gap-2">
+                  <span class="w-4 h-4 rounded-full bg-white border border-gray-300"></span> Blanco Nieve
+                </button>
+              </div>
+            </div>
+          }
+
           <div class="flex flex-col sm:flex-row gap-4 mb-8">
             <div class="flex items-center justify-between w-full sm:w-32 bg-[#fde8e6] rounded-xl px-4 py-4">
               <button (click)="decreaseQuantity()" class="text-[#bd3732] text-xl font-bold hover:scale-125 transition">&minus;</button>
@@ -117,130 +98,55 @@
             </button>
           </div>
 
-          @if (feedback()) {
-            <p
-              class="mb-6 rounded-xl px-4 py-3 text-sm font-semibold"
-              [class.bg-[#e8f7ef]]="feedback()?.type === 'success'"
-              [class.text-[#1d6b3f]]="feedback()?.type === 'success'"
-              [class.bg-[#fde8e6]]="feedback()?.type === 'error'"
-              [class.text-[#bd3732]]="feedback()?.type === 'error'">
-              {{ feedback()?.text }}
-            </p>
-          }
-
-          <!-- Features Cards -->
           <div class="flex justify-between bg-[#fde8e6] rounded-xl p-5">
-            <div class="flex flex-col items-center gap-2 text-[#007c7a]">
-              <span class="text-2xl">🌱</span>
-              <span class="text-xs font-bold uppercase">Vegano</span>
-            </div>
-            <div class="flex flex-col items-center gap-2 text-[#007c7a]">
-              <span class="text-2xl">🐰</span>
-              <span class="text-xs font-bold uppercase">Sin Crueldad</span>
-            </div>
-            <div class="flex flex-col items-center gap-2 text-[#007c7a]">
-              <span class="text-2xl">📦</span>
-              <span class="text-xs font-bold uppercase">Envío Gratis</span>
-            </div>
+            @if (isBeautyProduct) {
+              <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">🌱</span><span class="text-xs font-bold uppercase">Vegano</span></div>
+              <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">🐰</span><span class="text-xs font-bold uppercase">Sin Crueldad</span></div>
+            } @else if (isTechProduct) {
+              <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">🔋</span><span class="text-xs font-bold uppercase">Larga Batería</span></div>
+              <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">🛡️</span><span class="text-xs font-bold uppercase">1 Año Garantía</span></div>
+            } @else {
+              <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">🌿</span><span class="text-xs font-bold uppercase">Eco Amigable</span></div>
+              <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">✨</span><span class="text-xs font-bold uppercase">Premium</span></div>
+            }
+            <div class="flex flex-col items-center gap-2 text-[#007c7a]"><span class="text-2xl">📦</span><span class="text-xs font-bold uppercase">Envío Gratis</span></div>
           </div>
 
         </div>
       </section>
 
-      <!-- SECCIÓN INFERIOR: Tabs y Contenido -->
       <section class="mt-20 pt-10 border-t border-[#f0d6d2]">
-        
         <div class="flex gap-10 border-b border-[#f0d6d2] mb-10 overflow-x-auto">
-          <button (click)="setTab('beneficios')" [class.border-b-2]="activeTab() === 'beneficios'" [class.border-[#bd3732]]="activeTab() === 'beneficios'" [class.text-[#bd3732]]="activeTab() === 'beneficios'" [class.font-bold]="activeTab() === 'beneficios'" class="pb-4 text-xl text-[#9a817e] hover:text-[#bd3732] transition whitespace-nowrap">Beneficios</button>
-          
-          <button (click)="setTab('ingredientes')" [class.border-b-2]="activeTab() === 'ingredientes'" [class.border-[#bd3732]]="activeTab() === 'ingredientes'" [class.text-[#bd3732]]="activeTab() === 'ingredientes'" [class.font-bold]="activeTab() === 'ingredientes'" class="pb-4 text-xl text-[#9a817e] hover:text-[#bd3732] transition whitespace-nowrap">Ingredientes</button>
-          
-          <button (click)="setTab('uso')" [class.border-b-2]="activeTab() === 'uso'" [class.border-[#bd3732]]="activeTab() === 'uso'" [class.text-[#bd3732]]="activeTab() === 'uso'" [class.font-bold]="activeTab() === 'uso'" class="pb-4 text-xl text-[#9a817e] hover:text-[#bd3732] transition whitespace-nowrap">Modo de Uso</button>
+          <button (click)="setTab('beneficios')" [class.border-b-2]="activeTab() === 'beneficios'" [class.border-[#bd3732]]="activeTab() === 'beneficios'" [class.text-[#bd3732]]="activeTab() === 'beneficios'" [class.font-bold]="activeTab() === 'beneficios'" class="pb-4 text-xl text-[#9a817e] hover:text-[#bd3732] transition whitespace-nowrap">
+            {{ isTechProduct ? 'Especificaciones' : 'Beneficios' }}
+          </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-          @if (activeTab() === 'beneficios') {
+          @if (activeTab() === 'beneficios' && isBeautyProduct) {
             <div class="flex flex-col gap-8">
               <div class="flex gap-4">
                 <div class="w-12 h-12 rounded-full bg-[#e3ffff] flex items-center justify-center text-[#007c7a] text-xl shrink-0">💧</div>
                 <div>
                   <h3 class="text-xl font-bold text-[#211313] mb-2">Hidratación Profunda</h3>
-                  <p class="text-[#6a4d49] text-sm leading-relaxed">Retiene la humedad hasta por 72 horas, creando una apariencia radiante y tersa desde la primera aplicación.</p>
+                  <p class="text-[#6a4d49] text-sm leading-relaxed">Retiene la humedad creando una apariencia radiante.</p>
                 </div>
               </div>
+            </div>
+          } @else if (activeTab() === 'beneficios' && isTechProduct) {
+            <div class="flex flex-col gap-8">
               <div class="flex gap-4">
-                <div class="w-12 h-12 rounded-full bg-[#e3ffff] flex items-center justify-center text-[#007c7a] text-xl shrink-0">✨</div>
+                <div class="w-12 h-12 rounded-full bg-[#e3ffff] flex items-center justify-center text-[#007c7a] text-xl shrink-0">⚙️</div>
                 <div>
-                  <h3 class="text-xl font-bold text-[#211313] mb-2">Refinamiento de Textura</h3>
-                  <p class="text-[#6a4d49] text-sm leading-relaxed">Suaviza las líneas finas y minimiza los poros mediante tecnología avanzada de péptidos que imita las proteínas de la seda.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div class="bg-white rounded-3xl p-8 border border-[#f0d6d2] shadow-sm">
-              <h3 class="text-xl font-bold text-[#bd3732] mb-6">Resultados Clínicos</h3>
-              
-              <div class="mb-6">
-                <div class="flex justify-between text-sm font-semibold text-[#4c3a3a] mb-2">
-                  <span>Aumento de Luminosidad</span>
-                  <span>94%</span>
-                </div>
-                <div class="w-full bg-[#fde8e6] rounded-full h-3">
-                  <div class="bg-[#bd3732] h-3 rounded-full" style="width: 94%"></div>
-                </div>
-              </div>
-              
-              <div>
-                <div class="flex justify-between text-sm font-semibold text-[#4c3a3a] mb-2">
-                  <span>Mejora de la Barrera Cutánea</span>
-                  <span>88%</span>
-                </div>
-                <div class="w-full bg-[#fde8e6] rounded-full h-3">
-                  <div class="bg-[#bd3732] h-3 rounded-full" style="width: 88%"></div>
+                  <h3 class="text-xl font-bold text-[#211313] mb-2">Alta Tecnología</h3>
+                  <p class="text-[#6a4d49] text-sm leading-relaxed">Diseñado con los mejores componentes para durabilidad máxima.</p>
                 </div>
               </div>
             </div>
           }
         </div>
-
       </section>
-
-      <!-- PRODUCTOS RECOMENDADOS -->
-      <section class="mt-24">
-        <div class="flex items-end justify-between mb-10">
-          <div>
-            <h2 class="text-3xl font-extrabold text-[#211313]">También Te Podría Encantar</h2>
-            <p class="mt-2 text-[#6a4d49]">Completa tu rutina de bienestar con estos esenciales.</p>
-          </div>
-          <a routerLink="/catalog" class="text-sm font-bold text-[#26547c] hover:underline">Ver Todo</a>
-        </div>
-
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          @for (prod of recommendedProducts(); track prod.id) {
-            <article class="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#f0d6d2] group cursor-pointer" [routerLink]="['/products', prod.slug]">
-              <div class="relative h-56 overflow-hidden bg-[#f5efed]">
-                <img [src]="prod.imagenPrincipalUrl" [alt]="prod.nombre" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='/assets/img/home/hero.jpg'">
-                <button class="absolute top-3 right-3 h-8 w-8 rounded-full bg-white text-[#bd3732] shadow flex items-center justify-center hover:scale-110">♡</button>
-              </div>
-              <div class="p-5">
-                <p class="text-[10px] font-bold text-[#007c7a] uppercase tracking-wider mb-1">{{ prod.categoriaNombre }}</p>
-                <h3 class="font-bold text-[#211313] mb-4 truncate">{{ prod.nombre }}</h3>
-                <div class="flex justify-between items-center border-t border-[#f0d6d2] pt-4">
-                  <span class="font-bold text-[#26547c]">{{ formatPrice(prod.precio) }}</span>
-                  <button class="text-[#bd3732] text-xl font-bold hover:scale-125 transition">&oplus;</button>
-                </div>
-              </div>
-            </article>
-          }
-        </div>
-      </section>
-
-    </div>
-  } @else {
-    <div class="flex flex-col justify-center items-center h-[60vh] text-center">
-      <h2 class="text-3xl font-bold text-[#211313] mb-4">Producto no encontrado</h2>
-      <p class="text-[#6a4d49] mb-8">El producto que buscas no existe o ha sido retirado.</p>
-      <a routerLink="/catalog" class="bg-[#bd3732] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#a72f2b]">Volver a la tienda</a>
+      
     </div>
   }
 </main>
