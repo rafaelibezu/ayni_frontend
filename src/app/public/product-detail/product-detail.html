@@ -37,8 +37,14 @@
           <!-- Imagen Principal -->
           <div class="flex-1 relative rounded-3xl bg-[#f5efed] overflow-hidden shadow-sm">
             <img [src]="product()?.imagenPrincipalUrl" [alt]="product()?.nombre" class="w-full h-full object-cover" onerror="this.src='/assets/img/home/hero.jpg'">
-            <button class="absolute top-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#bd3732] shadow hover:scale-110 transition">
-              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
+            <button
+              type="button"
+              (click)="toggleFavorite()"
+              [disabled]="isFavoritePending()"
+              [attr.aria-label]="isFavorite() ? 'Eliminar de favoritos' : 'Agregar a favoritos'"
+              [title]="isFavorite() ? 'Eliminar de favoritos' : 'Agregar a favoritos'"
+              class="absolute top-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#bd3732] shadow hover:scale-110 transition disabled:cursor-not-allowed disabled:opacity-60">
+              <svg width="24" height="24" [attr.fill]="isFavorite() ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg>
             </button>
           </div>
         </div>
@@ -110,6 +116,17 @@
               Añadir al Carrito
             </button>
           </div>
+
+          @if (feedback()) {
+            <p
+              class="mb-6 rounded-xl px-4 py-3 text-sm font-semibold"
+              [class.bg-[#e8f7ef]]="feedback()?.type === 'success'"
+              [class.text-[#1d6b3f]]="feedback()?.type === 'success'"
+              [class.bg-[#fde8e6]]="feedback()?.type === 'error'"
+              [class.text-[#bd3732]]="feedback()?.type === 'error'">
+              {{ feedback()?.text }}
+            </p>
+          }
 
           <!-- Features Cards -->
           <div class="flex justify-between bg-[#fde8e6] rounded-xl p-5">
