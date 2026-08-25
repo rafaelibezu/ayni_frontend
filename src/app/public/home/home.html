@@ -8,7 +8,7 @@
 
       <img
         src="/assets/img/home/hero.jpg"
-        alt="Ayni bienestar"
+        alt="Productos de Ayni"
         class="hero-image absolute inset-0 h-full w-full"
         onerror="this.style.display='none'"
       />
@@ -21,12 +21,12 @@
         </span>
 
         <h1 class="text-5xl font-extrabold leading-tight tracking-tight text-[#211313] lg:text-6xl">
-          Eleva tus rituales cotidianos.
+          Encuentra lo que necesitas para ti y tu hogar.
         </h1>
 
         <p class="mt-6 max-w-md text-base leading-7 text-[#5c3e3b]">
-          Esenciales modernistas curados para tu cuerpo, alma y hogar.
-          Descubre el enfoque de Ayni hacia una vida intencional.
+          Descubre productos de belleza, cuidado personal, hogar y accesorios
+          seleccionados para acompañarte todos los días.
         </p>
 
         <div class="mt-9 flex flex-wrap gap-4">
@@ -59,7 +59,7 @@
         </h2>
 
         <p class="mt-2 text-sm text-[#6a4d49]">
-          Colecciones cuidadosamente curadas para tu estilo de vida modernista.
+          Explora nuestras categorías y encuentra tus productos favoritos.
         </p>
       </div>
 
@@ -78,26 +78,12 @@
             [class.lg:col-span-2]="index === 0"
             [class.lg:row-span-2]="index === 0"
           >
-            <!-- RUTAS ESTÁTICAS BLINDADAS POR SLUG -->
-            @if (category.slug === 'belleza') {
-              <img
-                src="/assets/categorias-img/belleza/belleza-logo.png"
-                [alt]="category.nombre"
-                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-              />
-            } @else if (category.slug === 'hogar') {
-              <img
-                src="/assets/categorias-img/hogar/hogar-logo.png"
-                [alt]="category.nombre"
-                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-              />
-            } @else {
-              <img
-                src="/assets/categorias-img/tecnologia/tecnologia-logo.png"
-                [alt]="category.nombre"
-                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-              />
-            }
+            <img
+              [src]="category.imagenUrl"
+              [alt]="category.nombre"
+              class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              onerror="this.src='/assets/img/home/hero.jpg'"
+            />
 
             <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent"></div>
 
@@ -129,7 +115,7 @@
         </h2>
 
         <p class="mt-3 text-sm leading-6 text-[#6a4d49]">
-          Los esenciales más amados por nuestra comunidad, creados con cuidado y diseñados para perdurar.
+          Conoce los productos destacados de nuestra tienda y elige tus favoritos.
         </p>
       </div>
 
@@ -209,23 +195,23 @@
         <div class="mb-8 text-4xl">♡</div>
 
         <h2 class="max-w-md text-4xl font-extrabold leading-tight">
-          Viviendo en Ayni: Nuestra Promesa a la Tierra.
+          Todo lo que buscas, en un solo lugar.
         </h2>
 
         <p class="mt-6 max-w-md text-sm leading-7 text-blue-100">
-          Ayni significa reciprocidad. Creemos en tomar solo lo que podemos devolver.
-          Todos nuestros productos son seleccionados con intención y cuidado.
+          En Ayni reunimos opciones de belleza, cuidado personal, hogar y accesorios
+          para que disfrutes una experiencia de compra fácil, segura y cercana.
         </p>
 
         <div class="mt-9 space-y-5">
           <div class="flex items-center gap-4">
             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">📦</span>
-            <p class="text-xs font-bold uppercase tracking-widest">Empaque libre de plástico</p>
+            <p class="text-xs font-bold uppercase tracking-widest">Productos para ti y tu hogar</p>
           </div>
 
           <div class="flex items-center gap-4">
             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">🚚</span>
-            <p class="text-xs font-bold uppercase tracking-widest">Envíos con huella de carbono neutra</p>
+            <p class="text-xs font-bold uppercase tracking-widest">Compra fácil y atención cercana</p>
           </div>
         </div>
       </div>
@@ -233,7 +219,7 @@
       <div class="min-h-[380px]">
         <img
           src="/assets/img/home/promise.jpg"
-          alt="Promesa Ayni"
+          alt="Selección de productos Ayni"
           class="h-full w-full object-cover"
           onerror="this.style.display='none'"
         />
@@ -245,12 +231,11 @@
   <section class="bg-[#f8deda] py-16">
     <div class="mx-auto max-w-3xl px-5 text-center">
       <h2 class="text-3xl font-extrabold text-[#211313]">
-        Únete al Círculo Interno de Ayni
+        Entérate de las novedades de Ayni
       </h2>
 
       <p class="mt-3 text-sm leading-6 text-[#6a4d49]">
-        Recibe acceso anticipado a nuevas colecciones, guías de estilo de vida exclusivas
-        y consejos de bienestar modernista.
+        Suscríbete para conocer nuevos productos, promociones y novedades de nuestra tienda.
       </p>
 
       <form

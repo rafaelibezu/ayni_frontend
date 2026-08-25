@@ -50,11 +50,11 @@ export class Home {
             let imgPath = '/assets/img/home/hero.jpg'; // Imagen por defecto de respaldo
 
             if (nombreLower.includes('belleza')) {
-              imgPath = '/assets/categorias-img/belleza/belleza-logo.png';
+              imgPath = '/assets/img/categories/belleza.jpg';
             } else if (nombreLower.includes('hogar')) {
-              imgPath = '/assets/categorias-img/hogar/hogar-logo.png';
+              imgPath = '/assets/img/categories/hogar.jpg';
             } else if (nombreLower.includes('tecnología') || nombreLower.includes('tecnologia')) {
-              imgPath = '/assets/categorias-img/tecnologia/tecnologia-logo.png';
+              imgPath = '/assets/img/categories/tecnologia.jpg';
             }
 
             return {
